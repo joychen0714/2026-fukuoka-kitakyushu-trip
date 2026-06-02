@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2026 福岡北九州自由行｜行程 App</title>
+    <meta name="description" content="2026 福岡北九州自由行手機版互動行程 App，含每日時間軸、花費、天氣與提醒。">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="header-main">
+          <div>
+            <div class="meta-line">
+              <span class="region-pill" id="region-pill">福岡</span>
+              <span>✈️ 2026 福岡北九州 7 天 6 夜</span>
+            </div>
+            <h1 id="day-title">Day 1・6/18・福岡 Day 1</h1>
+            <p id="stay-line">🏨 HEARTS Capsule Hotel & Spa 博多</p>
+          </div>
+          <aside class="weather-card" aria-label="天氣摘要">
+            <span id="weather-icon">🌤️</span>
+            <strong id="weather-temp">--°C</strong>
+            <small id="weather-detail">--</small>
+          </aside>
+        </div>
+
+        <div class="currency-tabs" aria-label="幣別切換">
+          <button class="active" type="button" data-currency="JPY">JPY</button>
+          <button type="button" data-currency="TWD">TWD</button>
+          <button type="button" data-currency="USD">USD</button>
+          <span>幣別</span>
+        </div>
+
+        <nav class="day-strip" id="day-strip" aria-label="每日行程"></nav>
+        <div class="legend" id="region-legend"></div>
+      </header>
+
+      <main>
+        <section class="tab-panel active" id="panel-itinerary" aria-label="行程">
+          <article class="stay-banner">
+            <div>
+              <span>🏨 今晚住宿</span>
+              <strong id="stay-name">--</strong>
+            </div>
+            <a id="stay-map" href="#" target="_blank" rel="noreferrer">▣ 地圖</a>
+          </article>
+          <div class="timeline" id="timeline"></div>
+        </section>
+
+        <section class="tab-panel" id="panel-expenses" aria-label="花費">
+          <header class="panel-title">
+            <p>Budget</p>
+            <h2>花費總覽</h2>
+          </header>
+          <div class="expense-summary" id="expense-summary"></div>
+          <div class="expense-list" id="expense-list"></div>
+        </section>
+
+        <section class="tab-panel" id="panel-weather" aria-label="天氣">
+          <header class="panel-title">
+            <p>Weather</p>
+            <h2>每日天氣備忘</h2>
+          </header>
+          <div class="weather-list" id="weather-list"></div>
+        </section>
+
+        <section class="tab-panel" id="panel-reminders" aria-label="提醒">
+          <header class="panel-title">
+            <p>Reminders</p>
+            <h2>提醒與清單</h2>
+          </header>
+          <div class="task-summary" id="task-summary"></div>
+          <div class="task-list" id="task-list"></div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="主要功能">
+        <button class="active" type="button" data-tab="itinerary">
+          <span>◎</span>
+          行程
+        </button>
+        <button type="button" data-tab="expenses">
+          <span>◎</span>
+          花費
+        </button>
+        <button type="button" data-tab="weather">
+          <span>◎</span>
+          天氣
+        </button>
+        <button type="button" data-tab="reminders">
+          <span>◎</span>
+          提醒
+        </button>
+      </nav>
+    </div>
+
+    <script src="trip-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
