@@ -4,6 +4,8 @@ const storageKey = (key) => `trip-mobile-${key}`;
 
 let selectedDay = 0;
 let selectedCurrency = "JPY";
+let shoppingStatus = "pending";
+let shoppingCategory = "全部";
 
 function readState(key) {
   try {
@@ -17,9 +19,23 @@ function writeState(key, value) {
   localStorage.setItem(storageKey(key), JSON.stringify(value));
 }
 
-function currencyAmount(amount) {
+function convertCurrency(amount, sourceCurrency = "JPY") {
+  if (sourceCurrency === selectedCurrency) return amount || 0;
+  const rates = data.meta.rates;
+  const jpy = sourceCurrency === "TWD"
+    ? (amount || 0) / rates.JPY_TWD
+    : sourceCurrency === "USD"
+      ? (amount || 0) / rates.JPY_USD
+      : (amount || 0);
+
+  if (selectedCurrency === "TWD") return jpy * rates.JPY_TWD;
+  if (selectedCurrency === "USD") return jpy * rates.JPY_USD;
+  return jpy;
+}
+
+function currencyAmount(amount, sourceCurrency = "JPY") {
   const currency = data.meta.currencies[selectedCurrency];
-  const converted = Math.round((amount || 0) * currency.rate);
+  const converted = Math.round(convertCurrency(amount, sourceCurrency));
   return `${currency.prefix}${converted.toLocaleString("zh-Hant-TW")}`;
 }
 
@@ -94,7 +110,7 @@ function renderTimeline() {
         <p>${item.note}</p>
         <footer>
           <button type="button">▣ 地圖</button>
-          <strong>${currencyAmount(item.cost)}</strong>
+          <strong>${currencyAmount(item.cost, item.currency)}</strong>
         </footer>
       </section>
     </article>
@@ -113,8 +129,10 @@ function renderCurrencyTabs() {
 }
 
 function renderExpenses() {
-  const total = data.expenses.reduce((sum, item) => sum + item.amount, 0);
-  const paid = data.expenses.filter((item) => item.paid).reduce((sum, item) => sum + item.amount, 0);
+  const total = data.expenses.reduce((sum, item) => sum + convertCurrency(item.amount, item.currency), 0);
+  const paid = data.expenses
+    .filter((item) => item.paid)
+    .reduce((sum, item) => sum + convertCurrency(item.amount, item.currency), 0);
   const percent = total ? Math.round((paid / total) * 100) : 0;
 
   byId("expense-summary").innerHTML = `
@@ -138,8 +156,8 @@ function renderExpenses() {
         <span class="tag ${tagClass(item.category)}">${item.category}</span>
         <h3>${item.item}</h3>
       </div>
-      <strong>${currencyAmount(item.amount)}</strong>
-      <small>${item.paid ? "已付款" : "待付款"}</small>
+      <strong>${currencyAmount(item.amount, item.currency)}</strong>
+      <small>${item.paid ? "已付款" : "待付款"}${item.note ? `・${item.note}` : ""}</small>
     </article>
   `).join("");
 }
@@ -192,6 +210,99 @@ function renderTasks() {
   });
 }
 
+function renderBookings() {
+  byId("booking-list").innerHTML = data.bookings.map((booking) => `
+    <article>
+      <span>${booking.icon}</span>
+      <div>
+        <h3>${booking.title}</h3>
+        <strong>${booking.detail}</strong>
+        <p>${booking.note}</p>
+      </div>
+    </article>
+  `).join("");
+}
+
+function renderShopping() {
+  const saved = readState("shopping");
+  const completed = data.shopping.filter((item) => saved[item.id] ?? item.done).length;
+  const percent = data.shopping.length ? Math.round((completed / data.shopping.length) * 100) : 0;
+  const categories = ["全部", ...new Set(data.shopping.map((item) => item.category))];
+  const statusOptions = [
+    { value: "all", label: "全部" },
+    { value: "pending", label: "待購" },
+    { value: "done", label: "已購" }
+  ];
+
+  byId("shopping-summary").innerHTML = `
+    <div>
+      <span>採購進度</span>
+      <strong>${completed}/${data.shopping.length}</strong>
+    </div>
+    <div class="shopping-progress" aria-label="已完成 ${percent}%">
+      <i style="width:${percent}%"></i>
+    </div>
+    <b>${percent}%</b>
+  `;
+
+  byId("shopping-filters").innerHTML = `
+    <div class="segmented-control">
+      ${statusOptions.map((option) => `
+        <button class="${shoppingStatus === option.value ? "active" : ""}" type="button" data-shopping-status="${option.value}">
+          ${option.label}
+        </button>
+      `).join("")}
+    </div>
+    <select id="shopping-category" aria-label="採購分類">
+      ${categories.map((category) => `
+        <option value="${category}" ${shoppingCategory === category ? "selected" : ""}>${category}</option>
+      `).join("")}
+    </select>
+  `;
+
+  const visibleItems = data.shopping.filter((item) => {
+    const done = saved[item.id] ?? item.done;
+    const statusMatch = shoppingStatus === "all"
+      || (shoppingStatus === "done" && done)
+      || (shoppingStatus === "pending" && !done);
+    return statusMatch && (shoppingCategory === "全部" || item.category === shoppingCategory);
+  });
+
+  byId("shopping-list").innerHTML = visibleItems.length ? visibleItems.map((item) => {
+    const done = saved[item.id] ?? item.done;
+    return `
+      <label class="${done ? "completed" : ""}">
+        <input type="checkbox" data-shopping-item="${item.id}" ${done ? "checked" : ""}>
+        <span>
+          <strong>${item.title}</strong>
+          <small>${item.category}</small>
+        </span>
+        <a href="${item.url}" target="_blank" rel="noreferrer" aria-label="在 Notion 開啟 ${item.title}">↗</a>
+      </label>
+    `;
+  }).join("") : `<p class="empty-state">這個篩選條件目前沒有品項。</p>`;
+
+  byId("shopping-filters").querySelectorAll("[data-shopping-status]").forEach((button) => {
+    button.addEventListener("click", () => {
+      shoppingStatus = button.dataset.shoppingStatus;
+      renderShopping();
+    });
+  });
+
+  byId("shopping-category").addEventListener("change", (event) => {
+    shoppingCategory = event.target.value;
+    renderShopping();
+  });
+
+  byId("shopping-list").querySelectorAll("input").forEach((input) => {
+    input.addEventListener("change", () => {
+      saved[input.dataset.shoppingItem] = input.checked;
+      writeState("shopping", saved);
+      renderShopping();
+    });
+  });
+}
+
 function setTab(tabName) {
   document.querySelectorAll(".tab-panel").forEach((panel) => {
     panel.classList.toggle("active", panel.id === `panel-${tabName}`);
@@ -215,6 +326,8 @@ function renderApp() {
   renderCurrencyTabs();
   renderExpenses();
   renderWeather();
+  renderShopping();
+  renderBookings();
   renderTasks();
 }
 
