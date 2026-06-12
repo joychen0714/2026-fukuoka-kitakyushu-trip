@@ -25,8 +25,8 @@ window.tripData = {
     {
       icon: "🏨",
       title: "HEARTS Capsule Hotel & Spa Hakata",
-      detail: "6/18 入住、6/24 退房・Men's Capsule Room・博多站步行約 5 分鐘",
-      note: "4-14-13 Hakataekimae, Hakata-ku, Fukuoka 812-0011"
+      detail: "6/18 入住、6/24 退房・Men's Capsule Room・住宿費 NT$5,800",
+      note: "原始付款幣別為 TWD；4-14-13 Hakataekimae, Hakata-ku, Fukuoka 812-0011"
     },
     {
       icon: "✈️",
@@ -190,7 +190,7 @@ window.tripData = {
   expenses: [
     { item: "AK1510 去程機票", category: "交通", amount: 9986, currency: "TWD", paid: true },
     { item: "IT721 回程機票", category: "交通", amount: 0, currency: "TWD", paid: true, note: "金額待補" },
-    { item: "HEARTS Capsule Hotel & Spa Hakata", category: "住宿", amount: 5800, currency: "TWD", paid: false },
+    { item: "HEARTS Capsule Hotel & Spa Hakata", category: "住宿", amount: 5800, currency: "TWD", paid: false, note: "原始金額 NT$5,800" },
     { item: "北九州 JR PASS 5 日券", category: "交通", amount: 16000, currency: "JPY", paid: true },
     { item: "市區交通與自費交通預估", category: "交通", amount: 5000, currency: "JPY", paid: false },
     { item: "餐食與咖啡預估", category: "美食", amount: 28000, currency: "JPY", paid: false },
