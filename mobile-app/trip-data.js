@@ -5,94 +5,151 @@ window.tripData = {
     startDate: "2026-06-18",
     endDate: "2026-06-24",
     currencies: {
-      JPY: { label: "JPY", prefix: "¥", rate: 1 },
-      TWD: { label: "TWD", prefix: "NT$", rate: 0.22 },
-      USD: { label: "USD", prefix: "US$", rate: 0.0068 }
+      JPY: { label: "JPY", prefix: "¥" },
+      TWD: { label: "TWD", prefix: "NT$" },
+      USD: { label: "USD", prefix: "US$" }
+    },
+    rates: {
+      JPY_TWD: 0.22,
+      JPY_USD: 0.0068
     }
   },
   regions: [
     { name: "福岡", color: "#28b67a" },
     { name: "北九州", color: "#e97822" },
     { name: "大分", color: "#8f55c7" },
-    { name: "熊本", color: "#3d84d8" }
+    { name: "熊本", color: "#3d84d8" },
+    { name: "下關", color: "#d55368" }
+  ],
+  bookings: [
+    {
+      icon: "🏨",
+      title: "HEARTS Capsule Hotel & Spa Hakata",
+      detail: "6/18 入住、6/24 退房・Men's Capsule Room・博多站步行約 5 分鐘",
+      note: "4-14-13 Hakataekimae, Hakata-ku, Fukuoka 812-0011"
+    },
+    {
+      icon: "✈️",
+      title: "AirAsia AK1510・去程",
+      detail: "6/18 桃園 T1 12:00 → 福岡 15:20・座位 18E",
+      note: "航班時間已變更；目前公開班表為 12:00 起飛、15:20 抵達。建議 09:00 前抵達桃園機場，並於出發前再次核對航空公司通知。"
+    },
+    {
+      icon: "✈️",
+      title: "Tigerair IT721・回程",
+      detail: "6/24 福岡 18:55 → 桃園 20:25",
+      note: "手提行李 10kg，無免費托運行李；建議 16:00 左右抵達福岡機場。"
+    },
+    {
+      icon: "🎫",
+      title: "北九州 JR PASS 5 日券",
+      detail: "使用期間 6/19－6/23・票價 ¥16,000",
+      note: "博多－小倉不可搭山陽新幹線，改搭 JR 九州 Sonic；博多－熊本可搭九州新幹線。"
+    },
+    {
+      icon: "🚆",
+      title: "由布院之森 3 號・已劃位",
+      detail: "6/21 博多 10:11 → 由布院 12:27",
+      note: "2 號車 8D 靠窗座位。"
+    },
+    {
+      icon: "📱",
+      title: "Apple Pay Suica",
+      detail: "建議儲值 ¥5,000－¥10,000，並設為快速交通卡",
+      note: "用於地下鐵、巴士、熊本市電、超商與小額消費；長距離 JR 由 PASS 負責。"
+    }
   ],
   days: [
     {
       day: "D1",
       date: "6/18",
-      label: "福岡 Day 1",
+      label: "福岡慢遊",
       region: "福岡",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "🌤️", temp: 28, range: "28°/22°", rain: "18%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 28, range: "梅雨季", rain: "出發前更新" },
       items: [
-        { time: "09:55", icon: "✈️", title: "去程航班・AK1510", tag: "交通", status: "已確認", note: "桃園 T1 出發，13:15 抵達福岡機場。", cost: 0, map: "https://maps.app.goo.gl/" },
-        { time: "13:45", icon: "🚇", title: "福岡機場 → 博多", tag: "交通", note: "抵達後先移動到博多，確認交通卡與隔日路線。", cost: 260 },
-        { time: "15:00", icon: "🏨", title: "住宿 Check-in", tag: "住宿", status: "待付款", note: "HEARTS Capsule Hotel & Spa 博多，6 晚住宿基地。", cost: 5800, map: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7" },
-        { time: "18:30", icon: "🍜", title: "博多站晚餐與伴手禮初看", tag: "美食", note: "先熟悉博多站動線，保留彈性補買日用品。", cost: 1800 }
+        { time: "12:00", icon: "✈️", title: "去程航班・AirAsia AK1510", tag: "交通", status: "時間已更新", note: "桃園 T1 → 福岡，座位 18E；目前班表預計 15:20 抵達。", cost: 0, currency: "JPY" },
+        { time: "15:20", icon: "🛬", title: "抵達福岡機場", tag: "交通", note: "完成入境後，搭國際線接駁巴士轉地下鐵，以 Apple Pay Suica 前往博多。", cost: 260, currency: "JPY" },
+        { time: "17:00", icon: "🏨", title: "住宿 Check-in", tag: "住宿", status: "已預訂", note: "Men's Capsule Room，連住 6 晚；有大浴場與三溫暖。實際時間依入境速度調整。", cost: 0, currency: "JPY" },
+        { time: "17:45", icon: "🛍️", title: "博多站與 WORKMAN Plus", tag: "購物", note: "第一天放慢節奏，熟悉博多站動線並補齊用品；若通關延誤可省略。", cost: 0, currency: "JPY" },
+        { time: "19:00", icon: "🥩", title: "豚ステーキ十一與伴手禮初探", tag: "美食", note: "可順看如水庵、Leclerc 可麗露、PRESS BUTTER SAND、MIGNON。", cost: 2200, currency: "JPY" },
+        { time: "21:00", icon: "♨️", title: "回住宿泡湯休息", tag: "住宿", note: "膠囊旅館建議使用耳塞與眼罩，第一晚以恢復體力為主。", cost: 0, currency: "JPY" }
       ]
     },
     {
       day: "D2",
       date: "6/19",
-      label: "北九州 Day 1",
+      label: "關門海峽",
       region: "北九州",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "⛅", temp: 27, range: "27°/21°", rain: "12%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 27, range: "夜景看能見度", rain: "備雨案" },
       items: [
-        { time: "08:30", icon: "🚄", title: "博多 → 小倉", tag: "交通", status: "待確認", note: "依 JR PASS 或單程票方案調整，先到小倉再接門司港。", cost: 2160 },
-        { time: "10:00", icon: "🏯", title: "小倉城與勝山公園", tag: "景點", note: "小倉市區核心景點，可安排城內展示與周邊散步。", cost: 350 },
-        { time: "13:30", icon: "🚃", title: "小倉 → 門司港", tag: "交通", note: "轉往門司港 Retro，下午看港町建築與海景。", cost: 280 },
-        { time: "14:00", icon: "⚓", title: "門司港 Retro", tag: "景點", status: "已確認", note: "參考舊網站主視覺，安排門司港站、懷舊街區與海邊散策。", cost: 0 },
-        { time: "18:30", icon: "🍛", title: "門司港燒咖哩", tag: "美食", note: "北九州代表食物，晚餐後返回博多。", cost: 1800 }
+        { time: "08:30", icon: "🚶", title: "住宿出發 → 博多站", tag: "交通", note: "北九州 JR PASS Day 1。博多－小倉不要搭山陽新幹線。", cost: 0, currency: "JPY" },
+        { time: "09:20", icon: "🚆", title: "Sonic 特急・博多 → 小倉", tag: "交通", status: "PASS", note: "約 50 分鐘；抵達小倉後轉鹿兒島本線前往門司港。", cost: 0, currency: "JPY" },
+        { time: "10:25", icon: "⚓", title: "門司港懷舊區散策", tag: "景點", note: "門司港站、藍翼橋、香蕉人像、舊大阪商船與海峽廣場。", cost: 0, currency: "JPY" },
+        { time: "11:30", icon: "⛴️", title: "關門汽船・門司港 → 唐戶", tag: "交通", note: "約 5 分鐘，以搭船方式跨越關門海峽。", cost: 400, currency: "JPY" },
+        { time: "11:40", icon: "🍣", title: "唐戶市場午餐", tag: "美食", note: "壽司、河豚味噌湯或海鮮丼；11:00－12:00 品項通常較完整。", cost: 2200, currency: "JPY" },
+        { time: "12:45", icon: "⛩️", title: "赤間神宮", tag: "景點", note: "朱紅色水天門，從唐戶市場步行約 5 分鐘。", cost: 0, currency: "JPY" },
+        { time: "13:05", icon: "📜", title: "日清講和紀念館與春帆樓", tag: "景點", status: "重點", note: "馬關條約歷史現場，紀念館免費，約停留 30 分鐘。", cost: 0, currency: "JPY" },
+        { time: "13:40", icon: "🌊", title: "壇之浦古戰場 → 御裳川公園", tag: "景點", note: "沿關門海峽步行前往人行隧道下關入口。", cost: 0, currency: "JPY" },
+        { time: "14:20", icon: "🚶", title: "關門海底人行隧道", tag: "景點", status: "重點", note: "全長約 780 公尺，步行 15－20 分鐘，在福岡縣／山口縣分界線拍照。", cost: 0, currency: "JPY" },
+        { time: "14:45", icon: "⛩️", title: "和布刈神社與關門大橋", tag: "景點", note: "從門司側出口步行前往，再搭巴士回門司港站。", cost: 300, currency: "JPY" },
+        { time: "16:00", icon: "🏯", title: "小倉城", tag: "景點", note: "天守閣與庭園約停留 1 小時。", cost: 350, currency: "JPY" },
+        { time: "18:30", icon: "🌃", title: "皿倉山夜景", tag: "景點", note: "八幡站轉接駁巴士與纜車；若雨霧或能見度差，應果斷取消。", cost: 1230, currency: "JPY" },
+        { time: "20:15", icon: "🚆", title: "Sonic 特急・八幡 → 博多", tag: "交通", status: "PASS", note: "預計 21:10 左右回博多，當天移動量最大。", cost: 0, currency: "JPY" }
       ]
     },
     {
       day: "D3",
       date: "6/20",
-      label: "福岡近郊",
+      label: "花季神社",
       region: "福岡",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "🌦️", temp: 26, range: "26°/21°", rain: "35%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 27, range: "紫陽花季", rain: "帶雨具" },
       items: [
-        { time: "09:00", icon: "⛩️", title: "宮地嶽神社", tag: "景點", note: "海之道景觀與神社散步，交通銜接需預留時間。", cost: 780 },
-        { time: "13:30", icon: "⛩️", title: "箱崎宮", tag: "景點", note: "回到福岡市區後安排安靜的神社行程。", cost: 0 },
-        { time: "16:00", icon: "🌳", title: "大濠公園", tag: "景點", note: "天氣穩定時散步，若下雨改逛博多站或天神地下街。", cost: 0 },
-        { time: "19:00", icon: "🍲", title: "福岡鍋物或拉麵", tag: "美食", note: "視體力安排水炊、拉麵或屋台。", cost: 2200 }
+        { time: "08:30", icon: "🚆", title: "博多 → 福間", tag: "交通", status: "PASS", note: "JR PASS Day 2；福間站再以 Suica 搭巴士前往宮地嶽神社。", cost: 0, currency: "JPY" },
+        { time: "09:30", icon: "⛩️", title: "宮地嶽神社與菖蒲祭", tag: "景點", note: "大注連繩、參道海景與 6 月花季是重點。", cost: 0, currency: "JPY" },
+        { time: "12:00", icon: "🥩", title: "佳吉屋炭烤牛排", tag: "美食", note: "依現場營業與交通時間彈性調整。", cost: 1800, currency: "JPY" },
+        { time: "14:30", icon: "💠", title: "筥崎宮紫陽花", tag: "景點", note: "JR 至箱崎，欣賞紫陽花與神社氛圍。", cost: 500, currency: "JPY" },
+        { time: "18:30", icon: "🍲", title: "元祖もつ鍋樂天地", tag: "美食", note: "晚餐後可依體力安排 NO LIMIT Bar。", cost: 2500, currency: "JPY" },
+        { time: "21:00", icon: "🍸", title: "NO LIMIT Bar", tag: "美食", note: "夜間彈性行程，隔日由布院不需過早出發。", cost: 2500, currency: "JPY" }
       ]
     },
     {
       day: "D4",
       date: "6/21",
-      label: "由布院 Day",
+      label: "由布院之森",
       region: "大分",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "🌤️", temp: 25, range: "25°/19°", rain: "20%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 24, range: "山區較涼", rain: "帶薄外套" },
       items: [
-        { time: "08:00", icon: "🚆", title: "博多 → 由布院", tag: "交通", status: "待確認", note: "若搭由布院之森需提前訂位；巴士可作備案。", cost: 5200 },
-        { time: "11:00", icon: "🏞️", title: "金鱗湖散步", tag: "景點", note: "先走湖邊，再銜接湯之坪街道。", cost: 0 },
-        { time: "13:00", icon: "🍰", title: "湯之坪街道午餐與甜點", tag: "美食", note: "小店、甜點與伴手禮集中，節奏可以放慢。", cost: 2400 },
-        { time: "15:00", icon: "🎨", title: "COMICO ART MUSEUM YUFUIN", tag: "景點", note: "若要入館，先確認開館日與票價。", cost: 1700 },
-        { time: "18:00", icon: "🚆", title: "由布院 → 博多", tag: "交通", note: "回程班次保守安排，避免太晚抵達。", cost: 5200 }
+        { time: "10:11", icon: "🚆", title: "由布院之森 3 號", tag: "交通", status: "已劃位", note: "JR PASS Day 3；博多 10:11 → 由布院 12:27，2 號車 8D 靠窗。", cost: 0, currency: "JPY" },
+        { time: "12:40", icon: "🍚", title: "由布釜飯心", tag: "美食", note: "抵達後先用餐，熱門時段可能需要候位。", cost: 2600, currency: "JPY" },
+        { time: "14:00", icon: "🎨", title: "COMICO ART MUSEUM YUFUIN", tag: "景點", status: "待預約", note: "週末人多，建議事前預約並確認開館資訊。", cost: 1700, currency: "JPY" },
+        { time: "15:30", icon: "🍡", title: "cuuchi 銅鑼燒與湯之坪街道", tag: "美食", note: "安排甜點、小店與伴手禮。", cost: 1200, currency: "JPY" },
+        { time: "16:30", icon: "🏞️", title: "金鱗湖", tag: "景點", note: "放在行程後段，下午光線較柔和；山區比福岡涼約 3－5°C。", cost: 0, currency: "JPY" },
+        { time: "18:00", icon: "🚆", title: "由布院 → 博多", tag: "交通", status: "PASS", note: "回程班次仍需核對並確認是否已劃位。", cost: 0, currency: "JPY" }
       ]
     },
     {
       day: "D5",
       date: "6/22",
-      label: "熊本 Day",
+      label: "熊本城",
       region: "熊本",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "☀️", temp: 29, range: "29°/22°", rain: "8%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 29, range: "步行量大", rain: "備雨案" },
       items: [
-        { time: "08:30", icon: "🚄", title: "博多 → 熊本", tag: "交通", status: "待確認", note: "新幹線往返，依 JR PASS 方案決定是否納入。", cost: 5230 },
-        { time: "10:00", icon: "🏯", title: "熊本城", tag: "景點", status: "已確認", note: "腹地大，建議保留 2 小時以上步行與拍照時間。", cost: 800 },
-        { time: "12:30", icon: "🍜", title: "熊本拉麵午餐", tag: "美食", note: "可安排城彩苑周邊或市區店家。", cost: 1500 },
-        { time: "14:00", icon: "🏘️", title: "櫻之馬場城彩苑", tag: "景點", note: "適合補伴手禮與休息。", cost: 0 },
-        { time: "17:30", icon: "🚄", title: "熊本 → 博多", tag: "交通", note: "回博多後整理採買清單。", cost: 5230 }
+        { time: "08:30", icon: "🚄", title: "九州新幹線・博多 → 熊本", tag: "交通", status: "PASS", note: "JR PASS Day 4；可搭 Sakura 或 Tsubame，博多－熊本屬 PASS 範圍。", cost: 0, currency: "JPY" },
+        { time: "10:00", icon: "🏯", title: "熊本城", tag: "景點", status: "重點", note: "園區腹地大，建議保留至少 2 小時。", cost: 800, currency: "JPY" },
+        { time: "12:30", icon: "🍜", title: "黑亭拉麵", tag: "美食", note: "熊本代表性拉麵，依候位狀況調整前後順序。", cost: 1400, currency: "JPY" },
+        { time: "14:00", icon: "🏘️", title: "櫻之馬場城彩苑", tag: "景點", note: "適合休息、吃小食與購買熊本伴手禮。", cost: 0, currency: "JPY" },
+        { time: "16:00", icon: "⛩️", title: "久留米水天宮・彈性", tag: "景點", status: "可取消", note: "若熊本城逛得較久或天候不佳，直接取消，避免行程過趕。", cost: 0, currency: "JPY" },
+        { time: "18:00", icon: "🚄", title: "熊本 → 博多", tag: "交通", status: "PASS", note: "以九州新幹線返回博多。", cost: 0, currency: "JPY" }
       ]
     },
     {
@@ -100,47 +157,57 @@ window.tripData = {
       date: "6/23",
       label: "海之中道",
       region: "福岡",
-      stay: "HEARTS Capsule Hotel & Spa 博多",
-      stayMap: "https://maps.app.goo.gl/qXG8YmrdsfNCzcgE7",
-      weather: { icon: "🌧️", temp: 26, range: "26°/22°", rain: "48%" },
+      stay: "HEARTS Capsule Hotel & Spa Hakata",
+      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      weather: { icon: "🌦️", temp: 27, range: "戶外海岸", rain: "前晚決定" },
       items: [
-        { time: "09:00", icon: "🚃", title: "博多 → 海之中道", tag: "交通", note: "受天氣影響較大，雨天可改市區備案。", cost: 650 },
-        { time: "10:00", icon: "🌷", title: "海之中道海濱公園", tag: "景點", note: "視花況與天氣安排散步路線。", cost: 450 },
-        { time: "13:00", icon: "🐟", title: "志賀島午餐", tag: "美食", note: "若交通與天氣允許，安排海邊餐食。", cost: 2200 },
-        { time: "16:30", icon: "🛍️", title: "博多站最後採買", tag: "購物", note: "補明太子、點心、調味料與行李空間檢查。", cost: 5000 }
+        { time: "09:00", icon: "🚃", title: "JR 香椎線・博多 → 海之中道", tag: "交通", status: "PASS", note: "JR PASS Day 5；當天受天氣影響大，前一晚確認是否照走。", cost: 0, currency: "JPY" },
+        { time: "10:00", icon: "🚲", title: "海之中道海濱公園", tag: "景點", note: "花海、海景與腳踏車；建議租車減少長距離步行。", cost: 700, currency: "JPY" },
+        { time: "13:00", icon: "🏝️", title: "志賀島", tag: "景點", note: "以 Suica 搭巴士，準備帽子、防曬、防蚊液與飲水。", cost: 700, currency: "JPY" },
+        { time: "14:30", icon: "🥭", title: "芒果冰與海邊休息", tag: "美食", note: "視店家營業與交通時間彈性調整。", cost: 1000, currency: "JPY" },
+        { time: "17:00", icon: "🌳", title: "大濠公園・彈性", tag: "景點", note: "若前段順利且體力足夠再安排；雨天可改博多站或天神地下街。", cost: 0, currency: "JPY" }
       ]
     },
     {
       day: "D7",
       date: "6/24",
-      label: "返台 Day",
+      label: "最後採買",
       region: "福岡",
-      stay: "返台日",
-      stayMap: "https://maps.app.goo.gl/",
-      weather: { icon: "🌤️", temp: 27, range: "27°/22°", rain: "18%" },
+      stay: "返台日・16:00 前往福岡機場",
+      stayMap: "https://maps.google.com/?q=Fukuoka+Airport+International+Terminal",
+      weather: { icon: "🌦️", temp: 28, range: "市區行程", rain: "留意航班" },
       items: [
-        { time: "08:30", icon: "🍳", title: "早餐・退房與寄放行李", tag: "美食", status: "已確認", note: "最後一天保留行李整理與退房時間。", cost: 1200 },
-        { time: "10:00", icon: "⛩️", title: "太宰府天滿宮", tag: "景點", note: "若體力充足安排近郊；若下雨改博多站採買。", cost: 820 },
-        { time: "14:30", icon: "🎁", title: "博多站伴手禮收尾", tag: "購物", note: "確認明太子、甜點、調味料與托運限制。", cost: 6000 },
-        { time: "16:30", icon: "🚇", title: "博多 → 福岡機場", tag: "交通", note: "預留報到、退稅與安檢時間。", cost: 260 },
-        { time: "18:55", icon: "✈️", title: "回程航班・IT721", tag: "交通", status: "已確認", note: "福岡出發，20:25 抵達桃園。", cost: 0 }
+        { time: "08:30", icon: "🧳", title: "退房與寄放行李", tag: "住宿", status: "已確認", note: "回程僅 10kg 手提、無免費托運，先確認行李重量與液體限制。", cost: 0, currency: "JPY" },
+        { time: "09:30", icon: "⛩️", title: "櫛田神社與川端通商店街", tag: "景點", note: "以 Suica 搭地下鐵，安排市區歷史與最後採買。", cost: 0, currency: "JPY" },
+        { time: "11:30", icon: "🍲", title: "水炊鍋午餐", tag: "美食", note: "最後一餐以福岡代表料理收尾。", cost: 3000, currency: "JPY" },
+        { time: "13:00", icon: "🗼", title: "福岡塔・視時間調整", tag: "景點", note: "若採買或天候影響，可取消，優先確保行李與機場時間。", cost: 800, currency: "JPY" },
+        { time: "14:00", icon: "🥖", title: "Pain Stock、Full Full 與伴手禮", tag: "購物", note: "可買 PRESS BUTTER SAND、MIGNON 等；注意 10kg 手提上限。", cost: 6000, currency: "JPY" },
+        { time: "16:00", icon: "🚇", title: "博多 → 福岡機場", tag: "交通", note: "地下鐵後轉國際線接駁，預留報到、安檢與移動時間。", cost: 260, currency: "JPY" },
+        { time: "18:55", icon: "✈️", title: "Tigerair IT721・返台", tag: "交通", status: "已預訂", note: "福岡 18:55 → 桃園 20:25，手提行李 10kg，無免費托運。", cost: 0, currency: "JPY" }
       ]
     }
   ],
   expenses: [
-    { item: "AK1510 去程機票", category: "交通", amount: 9986, paid: true },
-    { item: "IT721 回程機票", category: "交通", amount: 0, paid: true },
-    { item: "HEARTS Capsule Hotel & Spa 博多", category: "住宿", amount: 5800, paid: false },
-    { item: "鐵道與市區交通預估", category: "交通", amount: 26000, paid: false },
-    { item: "餐食與咖啡預估", category: "美食", amount: 18000, paid: false },
-    { item: "伴手禮與購物預估", category: "購物", amount: 12000, paid: false }
+    { item: "AK1510 去程機票", category: "交通", amount: 9986, currency: "TWD", paid: true },
+    { item: "IT721 回程機票", category: "交通", amount: 0, currency: "TWD", paid: true, note: "金額待補" },
+    { item: "HEARTS Capsule Hotel & Spa Hakata", category: "住宿", amount: 5800, currency: "TWD", paid: false },
+    { item: "北九州 JR PASS 5 日券", category: "交通", amount: 16000, currency: "JPY", paid: true },
+    { item: "市區交通與自費交通預估", category: "交通", amount: 5000, currency: "JPY", paid: false },
+    { item: "餐食與咖啡預估", category: "美食", amount: 28000, currency: "JPY", paid: false },
+    { item: "伴手禮與購物預估", category: "購物", amount: 20000, currency: "JPY", paid: false }
   ],
   tasks: [
-    { title: "確認 JR PASS 或單程票方案", group: "交通", done: false },
-    { title: "確認由布院列車或巴士訂位", group: "交通", done: false },
-    { title: "確認住宿付款與取消規則", group: "住宿", done: false },
-    { title: "整理護照、信用卡、旅遊保險", group: "文件", done: false },
-    { title: "完成伴手禮清單與行李空間估算", group: "購物", done: false },
-    { title: "打包雨具、行動電源與常備藥", group: "行李", done: false }
+    { title: "完成 Visit Japan Web 並截圖 QR Code", group: "入境", done: false },
+    { title: "出發前再次核對 AK1510 航班通知", group: "航班", done: false },
+    { title: "確認由布院回程列車與座位", group: "交通", done: false },
+    { title: "確認 COMICO ART MUSEUM 預約", group: "行程", done: false },
+    { title: "Apple Pay Suica 儲值 ¥5,000－¥10,000 並設快速交通卡", group: "支付", done: false },
+    { title: "準備 2 張信用卡與 ¥20,000－¥30,000 現金", group: "支付", done: false },
+    { title: "下載 eSIM、交通 App 與 Google Maps 離線地圖", group: "網路", done: false },
+    { title: "確認回程 10kg 手提行李，沒有免費托運", group: "行李", done: false },
+    { title: "打包摺疊傘、防水鞋、薄外套、防蚊與防曬", group: "梅雨", done: false },
+    { title: "行動電源放隨身，另帶耳塞、眼罩與常備藥", group: "行李", done: false },
+    { title: "6/18 抵達博多後領 JR PASS 並確認指定席", group: "交通", done: false },
+    { title: "6/19 前確認皿倉山纜車營業與能見度", group: "天氣", done: false }
   ]
 };
