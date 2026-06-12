@@ -316,6 +316,16 @@ main {
   border-color: var(--mint-line);
 }
 
+.event-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 0.85rem;
+  object-fit: cover;
+  background: var(--line);
+  border-radius: 0.65rem;
+}
+
 .event-card header {
   display: grid;
   gap: 0.55rem;
@@ -628,10 +638,10 @@ main {
 
 .shopping-list label {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 4.25rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.75rem;
-  min-height: 4.4rem;
+  min-height: 5.4rem;
   padding: 0.9rem;
 }
 
@@ -646,9 +656,28 @@ main {
   accent-color: var(--green);
 }
 
-.shopping-list span,
+.shopping-thumb {
+  display: block;
+  width: 4.25rem;
+  height: 4.25rem;
+  object-fit: cover;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+}
+
+.shopping-copy {
+  min-width: 0;
+}
+
+.shopping-list .shopping-copy,
 .shopping-list small {
   display: block;
+}
+
+.shopping-list strong {
+  overflow-wrap: anywhere;
+  line-height: 1.45;
 }
 
 .shopping-list small {
@@ -791,5 +820,16 @@ main {
 
   .shopping-filters {
     grid-template-columns: 1fr;
+  }
+
+  .shopping-list label {
+    grid-template-columns: auto 3.6rem minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    padding: 0.75rem;
+  }
+
+  .shopping-thumb {
+    width: 3.6rem;
+    height: 3.6rem;
   }
 }

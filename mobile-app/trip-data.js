@@ -88,16 +88,16 @@ window.tripData = {
       items: [
         { time: "08:30", icon: "🚶", title: "住宿出發 → 博多站", tag: "交通", note: "北九州 JR PASS Day 1。博多－小倉不要搭山陽新幹線。", cost: 0, currency: "JPY" },
         { time: "09:20", icon: "🚆", title: "Sonic 特急・博多 → 小倉", tag: "交通", status: "PASS", note: "約 50 分鐘；抵達小倉後轉鹿兒島本線前往門司港。", cost: 0, currency: "JPY" },
-        { time: "10:25", icon: "⚓", title: "門司港懷舊區散策", tag: "景點", note: "門司港站、藍翼橋、香蕉人像、舊大阪商船與海峽廣場。", cost: 0, currency: "JPY" },
+        { time: "10:25", icon: "⚓", title: "門司港懷舊區散策", tag: "景點", image: "assets/places/mojiko-retro.webp", note: "門司港站、藍翼橋、香蕉人像、舊大阪商船與海峽廣場。", cost: 0, currency: "JPY" },
         { time: "11:30", icon: "⛴️", title: "關門汽船・門司港 → 唐戶", tag: "交通", note: "約 5 分鐘，以搭船方式跨越關門海峽。", cost: 400, currency: "JPY" },
         { time: "11:40", icon: "🍣", title: "唐戶市場午餐", tag: "美食", note: "壽司、河豚味噌湯或海鮮丼；11:00－12:00 品項通常較完整。", cost: 2200, currency: "JPY" },
-        { time: "12:45", icon: "⛩️", title: "赤間神宮", tag: "景點", note: "朱紅色水天門，從唐戶市場步行約 5 分鐘。", cost: 0, currency: "JPY" },
-        { time: "13:05", icon: "📜", title: "日清講和紀念館與春帆樓", tag: "景點", status: "重點", note: "馬關條約歷史現場，紀念館免費，約停留 30 分鐘。", cost: 0, currency: "JPY" },
-        { time: "13:40", icon: "🌊", title: "壇之浦古戰場 → 御裳川公園", tag: "景點", note: "沿關門海峽步行前往人行隧道下關入口。", cost: 0, currency: "JPY" },
-        { time: "14:20", icon: "🚶", title: "關門海底人行隧道", tag: "景點", status: "重點", note: "全長約 780 公尺，步行 15－20 分鐘，在福岡縣／山口縣分界線拍照。", cost: 0, currency: "JPY" },
-        { time: "14:45", icon: "⛩️", title: "和布刈神社與關門大橋", tag: "景點", note: "從門司側出口步行前往，再搭巴士回門司港站。", cost: 300, currency: "JPY" },
-        { time: "16:00", icon: "🏯", title: "小倉城", tag: "景點", note: "天守閣與庭園約停留 1 小時。", cost: 350, currency: "JPY" },
-        { time: "18:30", icon: "🌃", title: "皿倉山夜景", tag: "景點", note: "八幡站轉接駁巴士與纜車；若雨霧或能見度差，應果斷取消。", cost: 1230, currency: "JPY" },
+        { time: "12:45", icon: "⛩️", title: "赤間神宮", tag: "景點", image: "assets/places/akama-shrine.webp", note: "朱紅色水天門，從唐戶市場步行約 5 分鐘。", cost: 0, currency: "JPY" },
+        { time: "13:05", icon: "📜", title: "日清講和紀念館與春帆樓", tag: "景點", status: "重點", image: "assets/places/shunpanro.webp", note: "馬關條約歷史現場，紀念館免費，約停留 30 分鐘。", cost: 0, currency: "JPY" },
+        { time: "13:40", icon: "🌊", title: "壇之浦古戰場 → 御裳川公園", tag: "景點", image: "assets/places/mimosusogawa.webp", note: "沿關門海峽步行前往人行隧道下關入口。", cost: 0, currency: "JPY" },
+        { time: "14:20", icon: "🚶", title: "關門海底人行隧道", tag: "景點", status: "重點", image: "assets/places/kanmon-tunnel.webp", note: "全長約 780 公尺，步行 15－20 分鐘，在福岡縣／山口縣分界線拍照。", cost: 0, currency: "JPY" },
+        { time: "14:45", icon: "⛩️", title: "和布刈神社與關門大橋", tag: "景點", image: "assets/places/mekari-shrine.webp", note: "從門司側出口步行前往，再搭巴士回門司港站。", cost: 300, currency: "JPY" },
+        { time: "16:00", icon: "🏯", title: "小倉城", tag: "景點", image: "assets/places/kokura-castle.webp", note: "天守閣與庭園約停留 1 小時。", cost: 350, currency: "JPY" },
+        { time: "18:30", icon: "🌃", title: "皿倉山夜景", tag: "景點", image: "assets/places/sarakurayama.webp", note: "八幡站轉接駁巴士與纜車；若雨霧或能見度差，應果斷取消。", cost: 1230, currency: "JPY" },
         { time: "20:15", icon: "🚆", title: "Sonic 特急・八幡 → 博多", tag: "交通", status: "PASS", note: "預計 21:10 左右回博多，當天移動量最大。", cost: 0, currency: "JPY" }
       ]
     },
@@ -111,9 +111,9 @@ window.tripData = {
       weather: { icon: "🌦️", temp: 27, range: "紫陽花季", rain: "帶雨具" },
       items: [
         { time: "08:30", icon: "🚆", title: "博多 → 福間", tag: "交通", status: "PASS", note: "JR PASS Day 2；福間站再以 Suica 搭巴士前往宮地嶽神社。", cost: 0, currency: "JPY" },
-        { time: "09:30", icon: "⛩️", title: "宮地嶽神社與菖蒲祭", tag: "景點", note: "大注連繩、參道海景與 6 月花季是重點。", cost: 0, currency: "JPY" },
+        { time: "09:30", icon: "⛩️", title: "宮地嶽神社與菖蒲祭", tag: "景點", image: "assets/places/miyajidake-shrine.webp", note: "大注連繩、參道海景與 6 月花季是重點。", cost: 0, currency: "JPY" },
         { time: "12:00", icon: "🥩", title: "佳吉屋炭烤牛排", tag: "美食", note: "依現場營業與交通時間彈性調整。", cost: 1800, currency: "JPY" },
-        { time: "14:30", icon: "💠", title: "筥崎宮紫陽花", tag: "景點", note: "JR 至箱崎，欣賞紫陽花與神社氛圍。", cost: 500, currency: "JPY" },
+        { time: "14:30", icon: "💠", title: "筥崎宮紫陽花", tag: "景點", image: "assets/places/hakozaki-shrine.webp", note: "JR 至箱崎，欣賞紫陽花與神社氛圍。", cost: 500, currency: "JPY" },
         { time: "18:30", icon: "🍲", title: "元祖もつ鍋樂天地", tag: "美食", note: "晚餐後可依體力安排 NO LIMIT Bar。", cost: 2500, currency: "JPY" },
         { time: "21:00", icon: "🍸", title: "NO LIMIT Bar", tag: "美食", note: "夜間彈性行程，隔日由布院不需過早出發。", cost: 2500, currency: "JPY" }
       ]
@@ -129,9 +129,9 @@ window.tripData = {
       items: [
         { time: "10:11", icon: "🚆", title: "由布院之森 3 號", tag: "交通", status: "已劃位", note: "JR PASS Day 3；博多 10:11 → 由布院 12:27，2 號車 8D 靠窗。", cost: 0, currency: "JPY" },
         { time: "12:40", icon: "🍚", title: "由布釜飯心", tag: "美食", note: "抵達後先用餐，熱門時段可能需要候位。", cost: 2600, currency: "JPY" },
-        { time: "14:00", icon: "🎨", title: "COMICO ART MUSEUM YUFUIN", tag: "景點", status: "待預約", note: "週末人多，建議事前預約並確認開館資訊。", cost: 1700, currency: "JPY" },
+        { time: "14:00", icon: "🎨", title: "COMICO ART MUSEUM YUFUIN", tag: "景點", status: "待預約", image: "assets/places/comico-yufuin.webp", note: "週末人多，建議事前預約並確認開館資訊。", cost: 1700, currency: "JPY" },
         { time: "15:30", icon: "🍡", title: "cuuchi 銅鑼燒與湯之坪街道", tag: "美食", note: "安排甜點、小店與伴手禮。", cost: 1200, currency: "JPY" },
-        { time: "16:30", icon: "🏞️", title: "金鱗湖", tag: "景點", note: "放在行程後段，下午光線較柔和；山區比福岡涼約 3－5°C。", cost: 0, currency: "JPY" },
+        { time: "16:30", icon: "🏞️", title: "金鱗湖", tag: "景點", image: "assets/places/lake-kinrin.webp", note: "放在行程後段，下午光線較柔和；山區比福岡涼約 3－5°C。", cost: 0, currency: "JPY" },
         { time: "18:00", icon: "🚆", title: "由布院 → 博多", tag: "交通", status: "PASS", note: "回程班次仍需核對並確認是否已劃位。", cost: 0, currency: "JPY" }
       ]
     },
@@ -145,10 +145,10 @@ window.tripData = {
       weather: { icon: "🌦️", temp: 29, range: "步行量大", rain: "備雨案" },
       items: [
         { time: "08:30", icon: "🚄", title: "九州新幹線・博多 → 熊本", tag: "交通", status: "PASS", note: "JR PASS Day 4；可搭 Sakura 或 Tsubame，博多－熊本屬 PASS 範圍。", cost: 0, currency: "JPY" },
-        { time: "10:00", icon: "🏯", title: "熊本城", tag: "景點", status: "重點", note: "園區腹地大，建議保留至少 2 小時。", cost: 800, currency: "JPY" },
+        { time: "10:00", icon: "🏯", title: "熊本城", tag: "景點", status: "重點", image: "assets/places/kumamoto-castle.webp", note: "園區腹地大，建議保留至少 2 小時。", cost: 800, currency: "JPY" },
         { time: "12:30", icon: "🍜", title: "黑亭拉麵", tag: "美食", note: "熊本代表性拉麵，依候位狀況調整前後順序。", cost: 1400, currency: "JPY" },
-        { time: "14:00", icon: "🏘️", title: "櫻之馬場城彩苑", tag: "景點", note: "適合休息、吃小食與購買熊本伴手禮。", cost: 0, currency: "JPY" },
-        { time: "16:00", icon: "⛩️", title: "久留米水天宮・彈性", tag: "景點", status: "可取消", note: "若熊本城逛得較久或天候不佳，直接取消，避免行程過趕。", cost: 0, currency: "JPY" },
+        { time: "14:00", icon: "🏘️", title: "櫻之馬場城彩苑", tag: "景點", image: "assets/places/josaien.webp", note: "適合休息、吃小食與購買熊本伴手禮。", cost: 0, currency: "JPY" },
+        { time: "16:00", icon: "⛩️", title: "久留米水天宮・彈性", tag: "景點", status: "可取消", image: "assets/places/kurume-suitengu.webp", note: "若熊本城逛得較久或天候不佳，直接取消，避免行程過趕。", cost: 0, currency: "JPY" },
         { time: "18:00", icon: "🚄", title: "熊本 → 博多", tag: "交通", status: "PASS", note: "以九州新幹線返回博多。", cost: 0, currency: "JPY" }
       ]
     },
@@ -162,10 +162,10 @@ window.tripData = {
       weather: { icon: "🌦️", temp: 27, range: "戶外海岸", rain: "前晚決定" },
       items: [
         { time: "09:00", icon: "🚃", title: "JR 香椎線・博多 → 海之中道", tag: "交通", status: "PASS", note: "JR PASS Day 5；當天受天氣影響大，前一晚確認是否照走。", cost: 0, currency: "JPY" },
-        { time: "10:00", icon: "🚲", title: "海之中道海濱公園", tag: "景點", note: "花海、海景與腳踏車；建議租車減少長距離步行。", cost: 700, currency: "JPY" },
-        { time: "13:00", icon: "🏝️", title: "志賀島", tag: "景點", note: "以 Suica 搭巴士，準備帽子、防曬、防蚊液與飲水。", cost: 700, currency: "JPY" },
+        { time: "10:00", icon: "🚲", title: "海之中道海濱公園", tag: "景點", image: "assets/places/uminonakamichi.webp", note: "花海、海景與腳踏車；建議租車減少長距離步行。", cost: 700, currency: "JPY" },
+        { time: "13:00", icon: "🏝️", title: "志賀島", tag: "景點", image: "assets/places/shikanoshima.webp", note: "以 Suica 搭巴士，準備帽子、防曬、防蚊液與飲水。", cost: 700, currency: "JPY" },
         { time: "14:30", icon: "🥭", title: "芒果冰與海邊休息", tag: "美食", note: "視店家營業與交通時間彈性調整。", cost: 1000, currency: "JPY" },
-        { time: "17:00", icon: "🌳", title: "大濠公園・彈性", tag: "景點", note: "若前段順利且體力足夠再安排；雨天可改博多站或天神地下街。", cost: 0, currency: "JPY" }
+        { time: "17:00", icon: "🌳", title: "大濠公園・彈性", tag: "景點", image: "assets/places/ohori-park.webp", note: "若前段順利且體力足夠再安排；雨天可改博多站或天神地下街。", cost: 0, currency: "JPY" }
       ]
     },
     {
@@ -178,9 +178,9 @@ window.tripData = {
       weather: { icon: "🌦️", temp: 28, range: "市區行程", rain: "留意航班" },
       items: [
         { time: "08:30", icon: "🧳", title: "退房與寄放行李", tag: "住宿", status: "已確認", note: "回程僅 10kg 手提、無免費托運，先確認行李重量與液體限制。", cost: 0, currency: "JPY" },
-        { time: "09:30", icon: "⛩️", title: "櫛田神社與川端通商店街", tag: "景點", note: "以 Suica 搭地下鐵，安排市區歷史與最後採買。", cost: 0, currency: "JPY" },
+        { time: "09:30", icon: "⛩️", title: "櫛田神社與川端通商店街", tag: "景點", image: "assets/places/kushida-shrine.webp", note: "以 Suica 搭地下鐵，安排市區歷史與最後採買。", cost: 0, currency: "JPY" },
         { time: "11:30", icon: "🍲", title: "水炊鍋午餐", tag: "美食", note: "最後一餐以福岡代表料理收尾。", cost: 3000, currency: "JPY" },
-        { time: "13:00", icon: "🗼", title: "福岡塔・視時間調整", tag: "景點", note: "若採買或天候影響，可取消，優先確保行李與機場時間。", cost: 800, currency: "JPY" },
+        { time: "13:00", icon: "🗼", title: "福岡塔・視時間調整", tag: "景點", image: "assets/places/fukuoka-tower.webp", note: "若採買或天候影響，可取消，優先確保行李與機場時間。", cost: 800, currency: "JPY" },
         { time: "14:00", icon: "🥖", title: "Pain Stock、Full Full 與伴手禮", tag: "購物", note: "可買 PRESS BUTTER SAND、MIGNON 等；注意 10kg 手提上限。", cost: 6000, currency: "JPY" },
         { time: "16:00", icon: "🚇", title: "博多 → 福岡機場", tag: "交通", note: "地下鐵後轉國際線接駁，預留報到、安檢與移動時間。", cost: 260, currency: "JPY" },
         { time: "18:55", icon: "✈️", title: "Tigerair IT721・返台", tag: "交通", status: "已預訂", note: "福岡 18:55 → 桃園 20:25，手提行李 10kg，無免費托運。", cost: 0, currency: "JPY" }
@@ -197,19 +197,19 @@ window.tripData = {
     { item: "伴手禮與購物預估", category: "購物", amount: 20000, currency: "JPY", paid: false }
   ],
   shopping: [
-    { id: "menbei-mentaiko", title: "めんべい辛子明太子風味煎餅", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080d6aa09c097c5572341", done: false },
-    { id: "shio-kombu", title: "塩昆布", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0805193d0fddf34953e21", done: false },
-    { id: "press-butter-sand", title: "PRESS BUTTER SAND", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080a39d7eea6d7cda18d2", done: false },
-    { id: "seven-eleven-cookie", title: "7-11 餅乾", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0801d885ef51baa084085", done: false },
-    { id: "menbei-seafood", title: "めんべい（海鮮仙貝）", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080daa001cd5e568c50ac", done: false },
-    { id: "kayanoya-yuzu", title: "茅乃舍 柚子胡椒", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0804baae2db6184a40408", done: false },
-    { id: "mentaiko-bread", title: "明太子麵包", category: "當地食用", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080bf8c52c2971fd998bc", done: false },
-    { id: "familymart-socks", title: "全家襪子", category: "用品", source: "Notion", url: "https://app.notion.com/p/2e1b15c3afa081f68445c4702d4989b3", done: false },
-    { id: "yamaya-mentaiko", title: "YAMAYA 明太子醬", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0803ea281ead4d225c81a", done: false },
-    { id: "sabrina", title: "Sabrina 千層酥", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08053a309c57239fbda99", done: false },
-    { id: "mentaiko-pretz", title: "明太子 PRETZ", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080f29225c35c32dc299b", done: false },
-    { id: "workman-plus", title: "WORKMAN Plus", category: "用品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08073a113d9808e9f7e65", done: false },
-    { id: "mentaiko", title: "明太子", category: "當地食用", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0808695b2e0b6879d760c", done: false }
+    { id: "menbei-mentaiko", title: "めんべい辛子明太子風味煎餅", category: "食品", image: "assets/shopping/menbei-mentaiko.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080d6aa09c097c5572341", done: false },
+    { id: "shio-kombu", title: "塩昆布", category: "食品", image: "assets/shopping/shio-kombu.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0805193d0fddf34953e21", done: false },
+    { id: "press-butter-sand", title: "PRESS BUTTER SAND", category: "食品", image: "assets/shopping/press-butter-sand.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080a39d7eea6d7cda18d2", done: false },
+    { id: "seven-eleven-cookie", title: "7-11 餅乾", category: "食品", image: "assets/shopping/seven-eleven-cookie.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0801d885ef51baa084085", done: false },
+    { id: "menbei-seafood", title: "めんべい（海鮮仙貝）", category: "食品", image: "assets/shopping/menbei-seafood.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080daa001cd5e568c50ac", done: false },
+    { id: "kayanoya-yuzu", title: "茅乃舍 柚子胡椒", category: "食品", image: "assets/shopping/kayanoya-yuzu.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0804baae2db6184a40408", done: false },
+    { id: "mentaiko-bread", title: "明太子麵包", category: "當地食用", image: "assets/shopping/mentaiko-bread.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080bf8c52c2971fd998bc", done: false },
+    { id: "familymart-socks", title: "全家襪子", category: "用品", image: "assets/shopping/familymart-socks.webp", source: "Notion", url: "https://app.notion.com/p/2e1b15c3afa081f68445c4702d4989b3", done: false },
+    { id: "yamaya-mentaiko", title: "YAMAYA 明太子醬", category: "食品", image: "assets/shopping/yamaya-mentaiko.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0803ea281ead4d225c81a", done: false },
+    { id: "sabrina", title: "Sabrina 千層酥", category: "食品", image: "assets/shopping/sabrina.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08053a309c57239fbda99", done: false },
+    { id: "mentaiko-pretz", title: "明太子 PRETZ", category: "食品", image: "assets/shopping/mentaiko-pretz.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080f29225c35c32dc299b", done: false },
+    { id: "workman-plus", title: "WORKMAN Plus", category: "用品", image: "assets/shopping/workman-plus.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08073a113d9808e9f7e65", done: false },
+    { id: "mentaiko", title: "明太子", category: "當地食用", image: "assets/shopping/mentaiko.webp", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0808695b2e0b6879d760c", done: false }
   ],
   tasks: [
     { title: "完成 Visit Japan Web 並截圖 QR Code", group: "入境", done: false },

@@ -100,6 +100,15 @@ function renderTimeline() {
       <time>${item.time}</time>
       <div class="time-line"></div>
       <section class="event-card ${item.status ? "confirmed-card" : ""}">
+        ${item.image ? `
+          <img
+            class="event-image"
+            src="${item.image}"
+            alt="${item.title}"
+            loading="lazy"
+            decoding="async"
+          >
+        ` : ""}
         <header>
           <h2><span>${item.icon}</span>${item.title}</h2>
           <div class="event-tags">
@@ -273,7 +282,14 @@ function renderShopping() {
     return `
       <label class="${done ? "completed" : ""}">
         <input type="checkbox" data-shopping-item="${item.id}" ${done ? "checked" : ""}>
-        <span>
+        <img
+          class="shopping-thumb"
+          src="${item.image}"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        >
+        <span class="shopping-copy">
           <strong>${item.title}</strong>
           <small>${item.category}</small>
         </span>
