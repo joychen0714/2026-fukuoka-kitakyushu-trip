@@ -67,11 +67,22 @@
           <div class="weather-list" id="weather-list"></div>
         </section>
 
+        <section class="tab-panel" id="panel-shopping" aria-label="採購">
+          <header class="panel-title">
+            <p>Shopping</p>
+            <h2>採購清單</h2>
+          </header>
+          <div class="shopping-summary" id="shopping-summary"></div>
+          <div class="shopping-filters" id="shopping-filters" aria-label="採購清單篩選"></div>
+          <div class="shopping-list" id="shopping-list"></div>
+        </section>
+
         <section class="tab-panel" id="panel-reminders" aria-label="提醒">
           <header class="panel-title">
             <p>Reminders</p>
-            <h2>提醒與清單</h2>
+            <h2>預訂資訊與提醒</h2>
           </header>
+          <div class="booking-list" id="booking-list"></div>
           <div class="task-summary" id="task-summary"></div>
           <div class="task-list" id="task-list"></div>
         </section>
@@ -89,6 +100,10 @@
         <button type="button" data-tab="weather">
           <span>◎</span>
           天氣
+        </button>
+        <button type="button" data-tab="shopping">
+          <span>◎</span>
+          採購
         </button>
         <button type="button" data-tab="reminders">
           <span>◎</span>
