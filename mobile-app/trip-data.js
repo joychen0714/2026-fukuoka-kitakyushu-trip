@@ -114,8 +114,9 @@ window.tripData = {
         { time: "09:30", icon: "⛩️", title: "宮地嶽神社與菖蒲祭", tag: "景點", image: "assets/places/miyajidake-shrine.webp", note: "大注連繩、參道海景與 6 月花季是重點。", cost: 0, currency: "JPY" },
         { time: "12:00", icon: "🥩", title: "佳吉屋炭烤牛排", tag: "美食", note: "依現場營業與交通時間彈性調整。", cost: 1800, currency: "JPY" },
         { time: "14:30", icon: "💠", title: "筥崎宮紫陽花", tag: "景點", image: "assets/places/hakozaki-shrine.webp", note: "JR 至箱崎，欣賞紫陽花與神社氛圍。", cost: 500, currency: "JPY" },
-        { time: "18:30", icon: "🍲", title: "元祖もつ鍋樂天地", tag: "美食", note: "晚餐後可依體力安排 NO LIMIT Bar。", cost: 2500, currency: "JPY" },
-        { time: "21:00", icon: "🍸", title: "NO LIMIT Bar", tag: "美食", note: "夜間彈性行程，隔日由布院不需過早出發。", cost: 2500, currency: "JPY" }
+        { time: "15:00", icon: "📍", title: "BOOSTER", tag: "景點", status: "15:00－19:00", mapUrl: "https://maps.app.goo.gl/3HQJeA7Jkr3mziMR6", note: "安排 15:00－19:00，結束後前往元祖もつ鍋樂天地用餐。", cost: 0, currency: "JPY" },
+        { time: "20:00", icon: "🍲", title: "元祖もつ鍋樂天地", tag: "美食", note: "BOOSTER 行程結束後前往用餐，建議事前確認候位或預約狀況。", cost: 2500, currency: "JPY" },
+        { time: "22:00", icon: "🍸", title: "NO LIMIT Bar", tag: "美食", note: "夜間彈性行程，隔日由布院不需過早出發。", cost: 2500, currency: "JPY" }
       ]
     },
     {

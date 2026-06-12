@@ -114,6 +114,7 @@ const googleMapPlaces = {
 };
 
 function googleMapsUrl(item) {
+  if (item.mapUrl) return item.mapUrl;
   const place = googleMapPlaces[item.title] || { query: `${item.title} 日本` };
   if (place.origin && place.destination) {
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(place.origin)}&destination=${encodeURIComponent(place.destination)}&travelmode=transit`;
