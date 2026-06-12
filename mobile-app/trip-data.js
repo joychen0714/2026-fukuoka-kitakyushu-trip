@@ -66,7 +66,7 @@ window.tripData = {
       label: "福岡慢遊",
       region: "福岡",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 28, range: "梅雨季", rain: "出發前更新" },
       items: [
         { time: "12:00", icon: "✈️", title: "去程航班・AirAsia AK1510", tag: "交通", status: "時間已更新", note: "桃園 T1 → 福岡，座位 18E；目前班表預計 15:20 抵達。", cost: 0, currency: "JPY" },
@@ -83,7 +83,7 @@ window.tripData = {
       label: "關門海峽",
       region: "北九州",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 27, range: "夜景看能見度", rain: "備雨案" },
       items: [
         { time: "08:30", icon: "🚶", title: "住宿出發 → 博多站", tag: "交通", note: "北九州 JR PASS Day 1。博多－小倉不要搭山陽新幹線。", cost: 0, currency: "JPY" },
@@ -107,7 +107,7 @@ window.tripData = {
       label: "花季神社",
       region: "福岡",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 27, range: "紫陽花季", rain: "帶雨具" },
       items: [
         { time: "08:30", icon: "🚆", title: "博多 → 福間", tag: "交通", status: "PASS", note: "JR PASS Day 2；福間站再以 Suica 搭巴士前往宮地嶽神社。", cost: 0, currency: "JPY" },
@@ -124,7 +124,7 @@ window.tripData = {
       label: "由布院之森",
       region: "大分",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 24, range: "山區較涼", rain: "帶薄外套" },
       items: [
         { time: "10:11", icon: "🚆", title: "由布院之森 3 號", tag: "交通", status: "已劃位", note: "JR PASS Day 3；博多 10:11 → 由布院 12:27，2 號車 8D 靠窗。", cost: 0, currency: "JPY" },
@@ -141,7 +141,7 @@ window.tripData = {
       label: "熊本城",
       region: "熊本",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 29, range: "步行量大", rain: "備雨案" },
       items: [
         { time: "08:30", icon: "🚄", title: "九州新幹線・博多 → 熊本", tag: "交通", status: "PASS", note: "JR PASS Day 4；可搭 Sakura 或 Tsubame，博多－熊本屬 PASS 範圍。", cost: 0, currency: "JPY" },
@@ -158,7 +158,7 @@ window.tripData = {
       label: "海之中道",
       region: "福岡",
       stay: "HEARTS Capsule Hotel & Spa Hakata",
-      stayMap: "https://maps.google.com/?q=HEARTS+Capsule+Hotel+Spa+Hakata",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=HEARTS%E3%82%AB%E3%83%97%E3%82%BB%E3%83%AB%E3%83%9B%E3%83%86%E3%83%AB%EF%BC%86%E3%82%B9%E3%83%91%E5%8D%9A%E5%A4%9A",
       weather: { icon: "🌦️", temp: 27, range: "戶外海岸", rain: "前晚決定" },
       items: [
         { time: "09:00", icon: "🚃", title: "JR 香椎線・博多 → 海之中道", tag: "交通", status: "PASS", note: "JR PASS Day 5；當天受天氣影響大，前一晚確認是否照走。", cost: 0, currency: "JPY" },
@@ -174,7 +174,7 @@ window.tripData = {
       label: "最後採買",
       region: "福岡",
       stay: "返台日・16:00 前往福岡機場",
-      stayMap: "https://maps.google.com/?q=Fukuoka+Airport+International+Terminal",
+      stayMap: "https://www.google.com/maps/search/?api=1&query=%E7%A6%8F%E5%B2%A1%E7%A9%BA%E6%B8%AF%20%E5%9B%BD%E9%9A%9B%E7%B7%9A%E6%97%85%E5%AE%A2%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB",
       weather: { icon: "🌦️", temp: 28, range: "市區行程", rain: "留意航班" },
       items: [
         { time: "08:30", icon: "🧳", title: "退房與寄放行李", tag: "住宿", status: "已確認", note: "回程僅 10kg 手提、無免費托運，先確認行李重量與液體限制。", cost: 0, currency: "JPY" },

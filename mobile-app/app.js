@@ -61,6 +61,66 @@ function weekdayLabel(date) {
   return "日一二三四五六"[weekday];
 }
 
+const googleMapPlaces = {
+  "去程航班・AirAsia AK1510": { query: "桃園國際機場 第一航廈" },
+  "抵達福岡機場": { query: "福岡空港 国際線旅客ターミナル" },
+  "住宿 Check-in": { query: "HEARTSカプセルホテル＆スパ博多" },
+  "博多站與 WORKMAN Plus": { query: "WORKMAN Plus 福岡県 福岡市" },
+  "豚ステーキ十一與伴手禮初探": { query: "豚ステーキ十一 博多駅南店" },
+  "回住宿泡湯休息": { query: "HEARTSカプセルホテル＆スパ博多" },
+  "住宿出發 → 博多站": { origin: "HEARTSカプセルホテル＆スパ博多", destination: "博多駅" },
+  "Sonic 特急・博多 → 小倉": { origin: "博多駅", destination: "小倉駅 福岡県" },
+  "門司港懷舊區散策": { query: "門司港レトロ" },
+  "關門汽船・門司港 → 唐戶": { origin: "関門汽船 門司港桟橋", destination: "唐戸桟橋" },
+  "唐戶市場午餐": { query: "唐戸市場" },
+  "赤間神宮": { query: "赤間神宮" },
+  "日清講和紀念館與春帆樓": { query: "日清講和記念館 春帆楼" },
+  "壇之浦古戰場 → 御裳川公園": { query: "みもすそ川公園 壇ノ浦古戦場址" },
+  "關門海底人行隧道": { query: "関門トンネル人道 下関側入口" },
+  "和布刈神社與關門大橋": { query: "和布刈神社" },
+  "小倉城": { query: "小倉城" },
+  "皿倉山夜景": { query: "皿倉山展望台" },
+  "Sonic 特急・八幡 → 博多": { origin: "八幡駅 福岡県", destination: "博多駅" },
+  "博多 → 福間": { origin: "博多駅", destination: "福間駅" },
+  "宮地嶽神社與菖蒲祭": { query: "宮地嶽神社" },
+  "佳吉屋炭烤牛排": { query: "佳吉屋 福津" },
+  "筥崎宮紫陽花": { query: "筥崎宮 あじさい苑" },
+  "元祖もつ鍋樂天地": { query: "元祖もつ鍋 楽天地 博多駅前店" },
+  "NO LIMIT Bar": { query: "NO LIMIT BAR 福岡" },
+  "由布院之森 3 號": { origin: "博多駅", destination: "由布院駅" },
+  "由布釜飯心": { query: "由布まぶし 心 駅前支店" },
+  "COMICO ART MUSEUM YUFUIN": { query: "COMICO ART MUSEUM YUFUIN" },
+  "cuuchi 銅鑼燒與湯之坪街道": { query: "鞠智 cuuchi 由布院" },
+  "金鱗湖": { query: "金鱗湖" },
+  "由布院 → 博多": { origin: "由布院駅", destination: "博多駅" },
+  "九州新幹線・博多 → 熊本": { origin: "博多駅", destination: "熊本駅" },
+  "熊本城": { query: "熊本城" },
+  "黑亭拉麵": { query: "熊本ラーメン 黒亭 本店" },
+  "櫻之馬場城彩苑": { query: "桜の馬場 城彩苑" },
+  "久留米水天宮・彈性": { query: "全国総本宮 水天宮 久留米" },
+  "熊本 → 博多": { origin: "熊本駅", destination: "博多駅" },
+  "JR 香椎線・博多 → 海之中道": { origin: "博多駅", destination: "海ノ中道駅" },
+  "海之中道海濱公園": { query: "海の中道海浜公園" },
+  "志賀島": { query: "志賀島 福岡" },
+  "芒果冰與海邊休息": { query: "志賀島 マンゴーかき氷" },
+  "大濠公園・彈性": { query: "大濠公園" },
+  "退房與寄放行李": { query: "HEARTSカプセルホテル＆スパ博多" },
+  "櫛田神社與川端通商店街": { query: "櫛田神社 福岡" },
+  "水炊鍋午餐": { query: "博多 水炊き" },
+  "福岡塔・視時間調整": { query: "福岡タワー" },
+  "Pain Stock、Full Full 與伴手禮": { query: "pain stock 天神 福岡" },
+  "博多 → 福岡機場": { origin: "博多駅", destination: "福岡空港 国際線旅客ターミナル" },
+  "Tigerair IT721・返台": { query: "福岡空港 国際線旅客ターミナル" }
+};
+
+function googleMapsUrl(item) {
+  const place = googleMapPlaces[item.title] || { query: `${item.title} 日本` };
+  if (place.origin && place.destination) {
+    return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(place.origin)}&destination=${encodeURIComponent(place.destination)}&travelmode=transit`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.query)}`;
+}
+
 function renderDayStrip() {
   const strip = byId("day-strip");
   strip.innerHTML = data.days.map((day, index) => `
@@ -125,7 +185,12 @@ function renderTimeline() {
         </header>
         <p>${item.note}</p>
         <footer>
-          <button type="button">▣ 地圖</button>
+          <a
+            href="${googleMapsUrl(item)}"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="在 Google Maps 開啟 ${item.title}"
+          >▣ 地圖</a>
           <strong>${currencyAmount(item.cost, item.currency)}</strong>
         </footer>
       </section>

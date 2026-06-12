@@ -257,7 +257,7 @@ main {
 }
 
 .stay-banner a,
-.event-card footer button {
+.event-card footer a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -402,10 +402,11 @@ main {
   gap: 0.8rem;
 }
 
-.event-card footer button {
+.event-card footer a {
   color: var(--blue-ink);
   background: var(--blue-soft);
   border-color: #cfe7f5;
+  text-decoration: none;
 }
 
 .event-card footer strong {
