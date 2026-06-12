@@ -196,6 +196,21 @@ window.tripData = {
     { item: "餐食與咖啡預估", category: "美食", amount: 28000, currency: "JPY", paid: false },
     { item: "伴手禮與購物預估", category: "購物", amount: 20000, currency: "JPY", paid: false }
   ],
+  shopping: [
+    { id: "menbei-mentaiko", title: "めんべい辛子明太子風味煎餅", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080d6aa09c097c5572341", done: false },
+    { id: "shio-kombu", title: "塩昆布", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0805193d0fddf34953e21", done: false },
+    { id: "press-butter-sand", title: "PRESS BUTTER SAND", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080a39d7eea6d7cda18d2", done: false },
+    { id: "seven-eleven-cookie", title: "7-11 餅乾", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0801d885ef51baa084085", done: false },
+    { id: "menbei-seafood", title: "めんべい（海鮮仙貝）", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080daa001cd5e568c50ac", done: false },
+    { id: "kayanoya-yuzu", title: "茅乃舍 柚子胡椒", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0804baae2db6184a40408", done: false },
+    { id: "mentaiko-bread", title: "明太子麵包", category: "當地食用", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080bf8c52c2971fd998bc", done: false },
+    { id: "familymart-socks", title: "全家襪子", category: "用品", source: "Notion", url: "https://app.notion.com/p/2e1b15c3afa081f68445c4702d4989b3", done: false },
+    { id: "yamaya-mentaiko", title: "YAMAYA 明太子醬", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0803ea281ead4d225c81a", done: false },
+    { id: "sabrina", title: "Sabrina 千層酥", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08053a309c57239fbda99", done: false },
+    { id: "mentaiko-pretz", title: "明太子 PRETZ", category: "食品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa080f29225c35c32dc299b", done: false },
+    { id: "workman-plus", title: "WORKMAN Plus", category: "用品", source: "Notion", url: "https://app.notion.com/p/36db15c3afa08073a113d9808e9f7e65", done: false },
+    { id: "mentaiko", title: "明太子", category: "當地食用", source: "Notion", url: "https://app.notion.com/p/36db15c3afa0808695b2e0b6879d760c", done: false }
+  ],
   tasks: [
     { title: "完成 Visit Japan Web 並截圖 QR Code", group: "入境", done: false },
     { title: "出發前再次核對 AK1510 航班通知", group: "航班", done: false },
