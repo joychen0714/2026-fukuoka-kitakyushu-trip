@@ -168,7 +168,7 @@ h1 {
 }
 
 .day-strip button {
-  flex: 0 0 4.7rem;
+  flex: 0 0 5.55rem;
   min-height: 4.1rem;
   color: var(--muted);
   background: var(--surface);
@@ -184,7 +184,8 @@ h1 {
 
 .day-strip button strong {
   margin-top: 0.25rem;
-  font-size: 1.02rem;
+  font-size: 0.96rem;
+  white-space: nowrap;
 }
 
 .day-strip button.active {

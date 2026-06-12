@@ -54,12 +54,19 @@ function tagClass(tag) {
   return map[tag] || "spot";
 }
 
+function weekdayLabel(date) {
+  const year = data.meta.startDate.slice(0, 4);
+  const [month, day] = date.split("/");
+  const weekday = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))).getUTCDay();
+  return "日一二三四五六"[weekday];
+}
+
 function renderDayStrip() {
   const strip = byId("day-strip");
   strip.innerHTML = data.days.map((day, index) => `
     <button class="${index === selectedDay ? "active" : ""}" type="button" data-day="${index}">
       <span>${day.day}</span>
-      <strong>${day.date}</strong>
+      <strong>${day.date}（${weekdayLabel(day.date)}）</strong>
     </button>
   `).join("");
 
