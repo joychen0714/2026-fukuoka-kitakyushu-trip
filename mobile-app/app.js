@@ -6,6 +6,7 @@ let selectedDay = 0;
 let selectedCurrency = "JPY";
 let shoppingStatus = "pending";
 let shoppingCategory = "全部";
+let timelineSortable = null;
 
 function readState(key) {
   try {
@@ -17,6 +18,69 @@ function readState(key) {
 
 function writeState(key, value) {
   localStorage.setItem(storageKey(key), JSON.stringify(value));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function itemKey(item) {
+  return item.id || item.title;
+}
+
+function getDayItems(day) {
+  const itinerary = readState("itinerary");
+  const savedDay = itinerary[day.date] || {};
+  const times = savedDay.times || {};
+  const baseItems = day.items.map((item) => ({
+    ...item,
+    _key: itemKey(item),
+    time: times[itemKey(item)] || item.time
+  }));
+  const positions = new Map((savedDay.order || []).map((key, index) => [key, index]));
+
+  return baseItems.sort((a, b) => {
+    const aPosition = positions.has(a._key) ? positions.get(a._key) : Number.MAX_SAFE_INTEGER;
+    const bPosition = positions.has(b._key) ? positions.get(b._key) : Number.MAX_SAFE_INTEGER;
+    return aPosition - bPosition;
+  });
+}
+
+function saveDayOrder(day, order) {
+  const itinerary = readState("itinerary");
+  itinerary[day.date] = { ...(itinerary[day.date] || {}), order };
+  writeState("itinerary", itinerary);
+}
+
+function saveItemTime(day, key, time) {
+  const itinerary = readState("itinerary");
+  const savedDay = itinerary[day.date] || {};
+  itinerary[day.date] = {
+    ...savedDay,
+    times: { ...(savedDay.times || {}), [key]: time }
+  };
+  writeState("itinerary", itinerary);
+}
+
+function expenseDefaults() {
+  return data.expenses.map((item, index) => ({
+    id: `default-${index}`,
+    ...item
+  }));
+}
+
+function getExpenses() {
+  const saved = readState("expenses");
+  return Array.isArray(saved) ? saved : expenseDefaults();
+}
+
+function saveExpenses(expenses) {
+  writeState("expenses", expenses);
 }
 
 function convertCurrency(amount, sourceCurrency = "JPY") {
@@ -65,8 +129,9 @@ const googleMapPlaces = {
   "去程航班・AirAsia AK1510": { query: "桃園國際機場 第一航廈" },
   "抵達福岡機場": { query: "福岡空港 国際線旅客ターミナル" },
   "住宿 Check-in": { query: "HEARTSカプセルホテル＆スパ博多" },
-  "博多站與 WORKMAN Plus": { query: "WORKMAN Plus 福岡県 福岡市" },
-  "豚ステーキ十一與伴手禮初探": { query: "豚ステーキ十一 博多駅南店" },
+  "WORKMAN Plus 福岡吉塚店": { query: "WORKMAN Plus 福岡吉塚店" },
+  "晚餐・豚ステーキ十一": { query: "豚ステーキ十一 博多駅南店" },
+  "博多車站點心與伴手禮初探": { query: "博多駅" },
   "回住宿泡湯休息": { query: "HEARTSカプセルホテル＆スパ博多" },
   "住宿出發 → 博多站": { origin: "HEARTSカプセルホテル＆スパ博多", destination: "博多駅" },
   "Sonic 特急・博多 → 小倉": { origin: "博多駅", destination: "小倉駅 福岡県" },
@@ -160,12 +225,29 @@ function renderHeader() {
 
 function renderTimeline() {
   const day = data.days[selectedDay];
+  const items = getDayItems(day);
   byId("stay-name").textContent = day.stay;
   byId("stay-map").href = day.stayMap;
 
-  byId("timeline").innerHTML = day.items.map((item) => `
-    <article class="timeline-row">
-      <time>${item.time}</time>
+  if (timelineSortable) {
+    timelineSortable.destroy();
+    timelineSortable = null;
+  }
+
+  byId("timeline").innerHTML = items.map((item) => `
+    <article class="timeline-row" data-item-key="${escapeHtml(item._key)}">
+      <label class="timeline-time">
+        <span class="sr-only">${escapeHtml(item.title)}時間</span>
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="5"
+          pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
+          value="${escapeHtml(item.time)}"
+          data-time-key="${escapeHtml(item._key)}"
+          aria-label="${escapeHtml(item.title)}時間"
+        >
+      </label>
       <div class="time-line"></div>
       <section class="event-card ${item.status ? "confirmed-card" : ""}">
         ${item.image ? `
@@ -178,25 +260,65 @@ function renderTimeline() {
           >
         ` : ""}
         <header>
-          <h2><span>${item.icon}</span>${item.title}</h2>
+          <div class="event-heading">
+            <h2><span>${item.icon}</span>${escapeHtml(item.title)}</h2>
+            <button class="drag-handle" type="button" title="長按拖曳調整順序" aria-label="拖曳 ${escapeHtml(item.title)}">⠿</button>
+          </div>
           <div class="event-tags">
-            <span class="tag ${tagClass(item.tag)}">${item.tag}</span>
-            ${item.status ? `<span class="status">✓ ${item.status}</span>` : ""}
+            <span class="tag ${tagClass(item.tag)}">${escapeHtml(item.tag)}</span>
+            ${item.status ? `<span class="status">✓ ${escapeHtml(item.status)}</span>` : ""}
           </div>
         </header>
-        <p>${item.note}</p>
+        <p>${escapeHtml(item.note)}</p>
         <footer>
           <a
             href="${googleMapsUrl(item)}"
             target="_blank"
             rel="noreferrer"
-            aria-label="在 Google Maps 開啟 ${item.title}"
+            aria-label="在 Google Maps 開啟 ${escapeHtml(item.title)}"
           >▣ 地圖</a>
           <strong>${currencyAmount(item.cost, item.currency)}</strong>
         </footer>
       </section>
     </article>
   `).join("");
+
+  byId("timeline").querySelectorAll("[data-time-key]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(input.value)) {
+        input.value = items.find((item) => item._key === input.dataset.timeKey)?.time || "";
+        return;
+      }
+      saveItemTime(day, input.dataset.timeKey, input.value);
+    });
+  });
+
+  if (window.Sortable) {
+    timelineSortable = window.Sortable.create(byId("timeline"), {
+      animation: 180,
+      handle: ".drag-handle",
+      delay: 350,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 4,
+      forceFallback: true,
+      fallbackOnBody: true,
+      fallbackTolerance: 3,
+      ghostClass: "timeline-ghost",
+      chosenClass: "timeline-chosen",
+      onEnd: () => {
+        const order = [...byId("timeline").querySelectorAll(".timeline-row")]
+          .map((row) => row.dataset.itemKey);
+        saveDayOrder(day, order);
+      }
+    });
+  }
+
+  byId("reset-day").onclick = () => {
+    const itinerary = readState("itinerary");
+    delete itinerary[day.date];
+    writeState("itinerary", itinerary);
+    renderTimeline();
+  };
 }
 
 function renderCurrencyTabs() {
@@ -211,20 +333,21 @@ function renderCurrencyTabs() {
 }
 
 function renderExpenses() {
-  const total = data.expenses.reduce((sum, item) => sum + convertCurrency(item.amount, item.currency), 0);
-  const paid = data.expenses
+  const expenses = getExpenses();
+  const total = expenses.reduce((sum, item) => sum + convertCurrency(Number(item.amount), item.currency), 0);
+  const paid = expenses
     .filter((item) => item.paid)
-    .reduce((sum, item) => sum + convertCurrency(item.amount, item.currency), 0);
+    .reduce((sum, item) => sum + convertCurrency(Number(item.amount), item.currency), 0);
   const percent = total ? Math.round((paid / total) * 100) : 0;
 
   byId("expense-summary").innerHTML = `
     <article>
       <span>目前預估</span>
-      <strong>${currencyAmount(total)}</strong>
+      <strong>${currencyAmount(total, selectedCurrency)}</strong>
     </article>
     <article>
       <span>已付款</span>
-      <strong>${currencyAmount(paid)}</strong>
+      <strong>${currencyAmount(paid, selectedCurrency)}</strong>
     </article>
     <article>
       <span>付款比例</span>
@@ -232,16 +355,90 @@ function renderExpenses() {
     </article>
   `;
 
-  byId("expense-list").innerHTML = data.expenses.map((item) => `
-    <article>
-      <div>
-        <span class="tag ${tagClass(item.category)}">${item.category}</span>
-        <h3>${item.item}</h3>
+  byId("expense-list").innerHTML = expenses.map((item) => `
+    <article data-expense-id="${escapeHtml(item.id)}">
+      <label class="expense-name">
+        <span>項目</span>
+        <input type="text" data-expense-field="item" value="${escapeHtml(item.item)}">
+      </label>
+      <div class="expense-grid">
+        <label>
+          <span>金額</span>
+          <input type="number" min="0" step="1" inputmode="numeric" data-expense-field="amount" value="${Number(item.amount) || 0}">
+        </label>
+        <label>
+          <span>幣別</span>
+          <select data-expense-field="currency">
+            ${Object.keys(data.meta.currencies).map((currency) => `
+              <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
+            `).join("")}
+          </select>
+        </label>
+        <label>
+          <span>分類</span>
+          <select data-expense-field="category">
+            ${["交通", "住宿", "美食", "購物", "景點", "其他"].map((category) => `
+              <option value="${category}" ${item.category === category ? "selected" : ""}>${category}</option>
+            `).join("")}
+          </select>
+        </label>
       </div>
-      <strong>${currencyAmount(item.amount, item.currency)}</strong>
-      <small>${item.paid ? "已付款" : "待付款"}${item.note ? `・${item.note}` : ""}</small>
+      <label class="expense-note">
+        <span>備註</span>
+        <input type="text" data-expense-field="note" value="${escapeHtml(item.note || "")}">
+      </label>
+      <footer>
+        <label class="expense-paid">
+          <input type="checkbox" data-expense-field="paid" ${item.paid ? "checked" : ""}>
+          <span>已付款</span>
+        </label>
+        <button class="delete-expense" type="button" aria-label="刪除 ${escapeHtml(item.item)}" title="刪除此筆">×</button>
+      </footer>
     </article>
   `).join("");
+
+  byId("expense-list").querySelectorAll("[data-expense-field]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const card = input.closest("[data-expense-id]");
+      const expense = expenses.find((item) => item.id === card.dataset.expenseId);
+      if (!expense) return;
+      const field = input.dataset.expenseField;
+      expense[field] = field === "paid"
+        ? input.checked
+        : field === "amount"
+          ? Math.max(0, Number(input.value) || 0)
+          : input.value;
+      saveExpenses(expenses);
+      renderExpenses();
+    });
+  });
+
+  byId("expense-list").querySelectorAll(".delete-expense").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.closest("[data-expense-id]").dataset.expenseId;
+      saveExpenses(expenses.filter((item) => item.id !== id));
+      renderExpenses();
+    });
+  });
+
+  byId("add-expense").onclick = () => {
+    expenses.push({
+      id: `custom-${Date.now()}`,
+      item: "新增花費",
+      category: "其他",
+      amount: 0,
+      currency: selectedCurrency,
+      paid: false,
+      note: ""
+    });
+    saveExpenses(expenses);
+    renderExpenses();
+  };
+
+  byId("reset-expenses").onclick = () => {
+    localStorage.removeItem(storageKey("expenses"));
+    renderExpenses();
+  };
 }
 
 function renderWeather() {

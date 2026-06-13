@@ -35,12 +35,24 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button {
   cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .app-shell {
@@ -282,11 +294,27 @@ main {
   gap: 0.55rem;
 }
 
-.timeline-row time {
+.timeline-time {
   padding-top: 0.5rem;
-  color: #99999a;
-  font-size: 0.95rem;
+}
+
+.timeline-time input {
+  width: 3.4rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.15rem;
+  text-align: center;
+  color: #777b80;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
+  font-size: 0.78rem;
   font-weight: 800;
+}
+
+.timeline-time input:focus {
+  background: var(--surface);
+  border-color: var(--green);
+  outline: 0;
 }
 
 .time-line {
@@ -332,6 +360,13 @@ main {
   gap: 0.55rem;
 }
 
+.event-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem;
+}
+
 .event-card h2 {
   display: flex;
   gap: 0.55rem;
@@ -343,6 +378,34 @@ main {
 
 .event-card h2 span {
   flex: 0 0 auto;
+}
+
+.drag-handle {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  color: var(--muted);
+  background: #f3f1ec;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  font-size: 1.2rem;
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.timeline-ghost {
+  opacity: 0.35;
+}
+
+.timeline-chosen .event-card {
+  border-color: var(--green);
+  box-shadow: 0 16px 36px rgba(47, 191, 124, 0.18);
 }
 
 .event-tags {
@@ -413,6 +476,28 @@ main {
   color: var(--muted);
 }
 
+.itinerary-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.2rem 0 0.45rem;
+}
+
+.itinerary-actions button,
+.expense-actions button {
+  min-height: 2.4rem;
+  color: #4e5358;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  font-weight: 800;
+}
+
+.itinerary-actions button {
+  width: 2.4rem;
+  padding: 0;
+  font-size: 1.15rem;
+}
+
 .panel-title {
   margin-bottom: 0.8rem;
 }
@@ -480,6 +565,23 @@ main {
   gap: 0.7rem;
 }
 
+.expense-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.8rem;
+}
+
+.expense-actions button {
+  padding: 0 0.85rem;
+}
+
+.expense-actions button:last-child {
+  width: 2.6rem;
+  padding: 0;
+  font-size: 1.15rem;
+}
+
 .booking-list {
   margin-bottom: 0.85rem;
 }
@@ -515,18 +617,81 @@ main {
 
 .expense-list article {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.35rem 0.8rem;
+  gap: 0.7rem;
   padding: 0.9rem;
 }
 
-.expense-list h3 {
-  margin: 0.4rem 0 0;
-  font-size: 1.05rem;
+.expense-list label > span {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
 }
 
-.expense-list small {
-  grid-column: 1 / -1;
+.expense-list input[type="text"],
+.expense-list input[type="number"],
+.expense-list select {
+  width: 100%;
+  min-height: 2.55rem;
+  padding: 0 0.65rem;
+  color: var(--ink);
+  background: #fbfaf7;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+}
+
+.expense-list input:focus,
+.expense-list select:focus {
+  border-color: var(--green);
+  outline: 0;
+}
+
+.expense-name input {
+  font-weight: 800;
+}
+
+.expense-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 0.8fr 1fr;
+  gap: 0.55rem;
+}
+
+.expense-list article > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.expense-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.expense-paid input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--green);
+}
+
+.expense-paid span {
+  margin: 0 !important;
+  color: var(--ink) !important;
+  font-size: 0.9rem !important;
+}
+
+.delete-expense {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  color: #a24b4b;
+  background: var(--red-soft);
+  border: 1px solid #f0d4cf;
+  border-radius: 0.45rem;
+  font-size: 1.3rem;
 }
 
 .weather-list button {
@@ -817,7 +982,27 @@ main {
   }
 
   .expense-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .expense-summary article {
+    padding: 0.65rem;
+  }
+
+  .expense-summary span {
+    font-size: 0.72rem;
+  }
+
+  .expense-summary strong {
+    font-size: 0.92rem;
+  }
+
+  .expense-grid {
+    grid-template-columns: 1fr 0.8fr;
+  }
+
+  .expense-grid label:last-child {
+    grid-column: 1 / -1;
   }
 
   .shopping-filters {

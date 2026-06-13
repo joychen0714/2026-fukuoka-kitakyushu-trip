@@ -70,11 +70,12 @@ window.tripData = {
       weather: { icon: "🌦️", temp: 28, range: "梅雨季", rain: "出發前更新" },
       items: [
         { time: "12:00", icon: "✈️", title: "去程航班・AirAsia AK1510", tag: "交通", status: "時間已更新", note: "桃園 T1 → 福岡，座位 18E；目前班表預計 15:20 抵達。", cost: 0, currency: "JPY" },
-        { time: "15:20", icon: "🛬", title: "抵達福岡機場", tag: "交通", note: "完成入境後，搭國際線接駁巴士轉地下鐵，以 Apple Pay Suica 前往博多。", cost: 260, currency: "JPY" },
-        { time: "17:00", icon: "🏨", title: "住宿 Check-in", tag: "住宿", status: "已預訂", note: "Men's Capsule Room，連住 6 晚；有大浴場與三溫暖。實際時間依入境速度調整。", cost: 0, currency: "JPY" },
-        { time: "17:45", icon: "🛍️", title: "博多站與 WORKMAN Plus", tag: "購物", note: "第一天放慢節奏，熟悉博多站動線並補齊用品；若通關延誤可省略。", cost: 0, currency: "JPY" },
-        { time: "19:00", icon: "🥩", title: "豚ステーキ十一與伴手禮初探", tag: "美食", note: "可順看如水庵、Leclerc 可麗露、PRESS BUTTER SAND、MIGNON。", cost: 2200, currency: "JPY" },
-        { time: "21:00", icon: "♨️", title: "回住宿泡湯休息", tag: "住宿", note: "膠囊旅館建議使用耳塞與眼罩，第一晚以恢復體力為主。", cost: 0, currency: "JPY" }
+        { time: "15:20", icon: "🛬", title: "抵達福岡機場", tag: "交通", note: "完成入境後，以 Apple Pay Suica 搭車前往 WORKMAN Plus 福岡吉塚店。", cost: 260, currency: "JPY" },
+        { time: "16:30", icon: "🛍️", title: "WORKMAN Plus 福岡吉塚店", tag: "購物", note: "從福岡機場先前往吉塚店採買，再返回博多住宿；若入境延誤可縮短停留時間。", cost: 0, currency: "JPY" },
+        { time: "18:00", icon: "🏨", title: "住宿 Check-in", tag: "住宿", status: "已預訂", note: "HEARTS Capsule Hotel & Spa Hakata，Men's Capsule Room，連住 6 晚。", cost: 0, currency: "JPY" },
+        { time: "19:00", icon: "🥩", title: "晚餐・豚ステーキ十一", tag: "美食", note: "完成住宿 Check-in 後前往用餐，依實際入境與移動時間彈性調整。", cost: 2200, currency: "JPY" },
+        { time: "20:30", icon: "🥐", title: "博多車站點心與伴手禮初探", tag: "購物", note: "熟悉博多站動線，可順看如水庵、Leclerc 可麗露、PRESS BUTTER SAND、MIGNON。", cost: 0, currency: "JPY" },
+        { time: "22:00", icon: "♨️", title: "回住宿泡湯休息", tag: "住宿", note: "膠囊旅館建議使用耳塞與眼罩，第一晚以恢復體力為主。", cost: 0, currency: "JPY" }
       ]
     },
     {

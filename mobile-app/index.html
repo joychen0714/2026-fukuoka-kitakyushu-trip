@@ -47,6 +47,9 @@
             </div>
             <a id="stay-map" href="#" target="_blank" rel="noreferrer">▣ 地圖</a>
           </article>
+          <div class="itinerary-actions">
+            <button id="reset-day" type="button" title="重設本日行程順序與時間" aria-label="重設本日行程順序與時間">↺</button>
+          </div>
           <div class="timeline" id="timeline"></div>
         </section>
 
@@ -56,6 +59,10 @@
             <h2>花費總覽</h2>
           </header>
           <div class="expense-summary" id="expense-summary"></div>
+          <div class="expense-actions">
+            <button id="add-expense" type="button">＋ 新增花費</button>
+            <button id="reset-expenses" type="button" title="重設花費資料" aria-label="重設花費資料">↺</button>
+          </div>
           <div class="expense-list" id="expense-list"></div>
         </section>
 
@@ -113,6 +120,7 @@
     </div>
 
     <script src="trip-data.js"></script>
+    <script src="assets/vendor/Sortable.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
