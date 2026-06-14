@@ -30,17 +30,26 @@ function escapeHtml(value) {
 }
 
 function itemKey(item) {
-  return item.id || item.title;
+  return item.id || item._key || item.title;
 }
 
 function getDayItems(day) {
   const itinerary = readState("itinerary");
   const savedDay = itinerary[day.date] || {};
+  if (Array.isArray(savedDay.items)) {
+    return savedDay.items.map((item, index) => ({
+      ...item,
+      id: item.id || `saved-${day.day}-${index}`,
+      _key: item.id || `saved-${day.day}-${index}`
+    }));
+  }
+
   const times = savedDay.times || {};
-  const baseItems = day.items.map((item) => ({
+  const baseItems = day.items.map((item, index) => ({
     ...item,
-    _key: itemKey(item),
-    time: times[itemKey(item)] || item.time
+    id: item.id || `default-${day.day}-${index}`,
+    _key: item.id || `default-${day.day}-${index}`,
+    time: times[itemKey(item)] || times[item.title] || item.time
   }));
   const positions = new Map((savedDay.order || []).map((key, index) => [key, index]));
 
@@ -51,20 +60,23 @@ function getDayItems(day) {
   });
 }
 
-function saveDayOrder(day, order) {
+function saveDayItems(day, items) {
   const itinerary = readState("itinerary");
-  itinerary[day.date] = { ...(itinerary[day.date] || {}), order };
+  itinerary[day.date] = {
+    items: items.map(({ _key, ...item }) => ({
+      ...item,
+      id: item.id || _key
+    }))
+  };
   writeState("itinerary", itinerary);
 }
 
 function saveItemTime(day, key, time) {
-  const itinerary = readState("itinerary");
-  const savedDay = itinerary[day.date] || {};
-  itinerary[day.date] = {
-    ...savedDay,
-    times: { ...(savedDay.times || {}), [key]: time }
-  };
-  writeState("itinerary", itinerary);
+  const items = getDayItems(day);
+  const item = items.find((entry) => entry._key === key);
+  if (!item) return;
+  item.time = time;
+  saveDayItems(day, items);
 }
 
 function expenseDefaults() {
@@ -76,7 +88,30 @@ function expenseDefaults() {
 
 function getExpenses() {
   const saved = readState("expenses");
-  return Array.isArray(saved) ? saved : expenseDefaults();
+  const expenses = (Array.isArray(saved) ? saved : expenseDefaults()).map((item) => ({
+    ...item,
+    autoShopping: false
+  }));
+  const shoppingItems = getShoppingItems();
+  let shoppingExpense = expenses.find((item) => (
+    String(item.item).includes("伴手禮") || item.id === "auto-shopping"
+  ));
+  if (!shoppingExpense) {
+    shoppingExpense = {
+      id: "auto-shopping",
+      item: "伴手禮與購物",
+      category: "購物",
+      paid: false
+    };
+    expenses.push(shoppingExpense);
+  }
+  shoppingExpense.item = "伴手禮與購物";
+  shoppingExpense.category = "購物";
+  shoppingExpense.amount = shoppingTotalJpy(shoppingItems);
+  shoppingExpense.currency = "JPY";
+  shoppingExpense.note = "由採購清單價格自動統計";
+  shoppingExpense.autoShopping = true;
+  return expenses;
 }
 
 function saveExpenses(expenses) {
@@ -102,6 +137,34 @@ function getTasks() {
 
 function saveTasks(tasks) {
   writeState("tasks", tasks);
+}
+
+function shoppingDefaults() {
+  const completion = readState("shopping");
+  return data.shopping.map((item) => ({
+    price: 0,
+    currency: "JPY",
+    ...item,
+    done: completion[item.id] ?? item.done
+  }));
+}
+
+function getShoppingItems() {
+  const saved = readState("shoppingItems");
+  return Array.isArray(saved) ? saved : shoppingDefaults();
+}
+
+function saveShoppingItems(items) {
+  writeState("shoppingItems", items);
+}
+
+function shoppingTotalJpy(items = getShoppingItems()) {
+  return items.reduce((total, item) => {
+    const price = Number(item.price) || 0;
+    if (item.currency === "TWD") return total + (price / data.meta.rates.JPY_TWD);
+    if (item.currency === "USD") return total + (price / data.meta.rates.JPY_USD);
+    return total + price;
+  }, 0);
 }
 
 function convertCurrency(amount, sourceCurrency = "JPY") {
@@ -283,7 +346,10 @@ function renderTimeline() {
         <header>
           <div class="event-heading">
             <h2><span>${item.icon}</span>${escapeHtml(item.title)}</h2>
-            <button class="drag-handle" type="button" title="長按拖曳調整順序" aria-label="拖曳 ${escapeHtml(item.title)}">⠿</button>
+            <div class="event-tools">
+              <button class="edit-event" type="button" title="編輯行程" aria-label="編輯 ${escapeHtml(item.title)}">✎</button>
+              <button class="drag-handle" type="button" title="長按拖曳調整順序" aria-label="拖曳 ${escapeHtml(item.title)}">⠿</button>
+            </div>
           </div>
           <div class="event-tags">
             <span class="tag ${tagClass(item.tag)}">${escapeHtml(item.tag)}</span>
@@ -291,6 +357,49 @@ function renderTimeline() {
           </div>
         </header>
         <p>${escapeHtml(item.note)}</p>
+        <div class="event-editor" hidden>
+          <label>
+            <span>名稱</span>
+            <input type="text" data-event-field="title" value="${escapeHtml(item.title)}">
+          </label>
+          <label>
+            <span>圖示</span>
+            <input type="text" data-event-field="icon" value="${escapeHtml(item.icon || "")}" maxlength="4">
+          </label>
+          <label>
+            <span>分類</span>
+            <select data-event-field="tag">
+              ${["交通", "住宿", "美食", "景點", "購物"].map((tag) => `
+                <option value="${tag}" ${item.tag === tag ? "selected" : ""}>${tag}</option>
+              `).join("")}
+            </select>
+          </label>
+          <label>
+            <span>說明</span>
+            <textarea data-event-field="note" rows="3">${escapeHtml(item.note)}</textarea>
+          </label>
+          <label>
+            <span>Google Maps 網址</span>
+            <input type="url" data-event-field="mapUrl" value="${escapeHtml(item.mapUrl || "")}" placeholder="https://">
+          </label>
+          <label>
+            <span>照片網址</span>
+            <input type="url" data-event-field="image" value="${escapeHtml(item.image || "")}" placeholder="https://">
+          </label>
+          <label>
+            <span>預估費用</span>
+            <input type="number" min="0" step="1" inputmode="numeric" data-event-field="cost" value="${Number(item.cost) || 0}">
+          </label>
+          <label>
+            <span>幣別</span>
+            <select data-event-field="currency">
+              ${Object.keys(data.meta.currencies).map((currency) => `
+                <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
+              `).join("")}
+            </select>
+          </label>
+          <button class="delete-event" type="button">刪除此行程</button>
+        </div>
         <footer>
           <a
             href="${googleMapsUrl(item)}"
@@ -314,6 +423,36 @@ function renderTimeline() {
     });
   });
 
+  byId("timeline").querySelectorAll(".edit-event").forEach((button) => {
+    button.addEventListener("click", () => {
+      const editor = button.closest(".event-card").querySelector(".event-editor");
+      editor.hidden = !editor.hidden;
+    });
+  });
+
+  byId("timeline").querySelectorAll("[data-event-field]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const row = input.closest(".timeline-row");
+      const currentItems = getDayItems(day);
+      const item = currentItems.find((entry) => entry._key === row.dataset.itemKey);
+      if (!item) return;
+      const field = input.dataset.eventField;
+      item[field] = field === "cost"
+        ? Math.max(0, Number(input.value) || 0)
+        : input.value;
+      saveDayItems(day, currentItems);
+      renderTimeline();
+    });
+  });
+
+  byId("timeline").querySelectorAll(".delete-event").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.closest(".timeline-row").dataset.itemKey;
+      saveDayItems(day, getDayItems(day).filter((item) => item._key !== key));
+      renderTimeline();
+    });
+  });
+
   if (window.Sortable) {
     timelineSortable = window.Sortable.create(byId("timeline"), {
       animation: 180,
@@ -329,10 +468,30 @@ function renderTimeline() {
       onEnd: () => {
         const order = [...byId("timeline").querySelectorAll(".timeline-row")]
           .map((row) => row.dataset.itemKey);
-        saveDayOrder(day, order);
+        const currentItems = getDayItems(day);
+        saveDayItems(day, order.map((key) => currentItems.find((item) => item._key === key)).filter(Boolean));
       }
     });
   }
+
+  byId("add-itinerary").onclick = () => {
+    const items = getDayItems(day);
+    const id = `custom-${Date.now()}`;
+    items.push({
+      id,
+      _key: id,
+      time: "12:00",
+      icon: "📍",
+      title: "新增行程",
+      tag: "景點",
+      note: "",
+      mapUrl: "",
+      cost: 0,
+      currency: "JPY"
+    });
+    saveDayItems(day, items);
+    renderTimeline();
+  };
 
   byId("reset-day").onclick = () => {
     const itinerary = readState("itinerary");
@@ -380,16 +539,16 @@ function renderExpenses() {
     <article data-expense-id="${escapeHtml(item.id)}">
       <label class="expense-name">
         <span>項目</span>
-        <input type="text" data-expense-field="item" value="${escapeHtml(item.item)}">
+        <input type="text" data-expense-field="item" value="${escapeHtml(item.item)}" ${item.autoShopping ? "readonly" : ""}>
       </label>
       <div class="expense-grid">
         <label>
           <span>金額</span>
-          <input type="number" min="0" step="1" inputmode="numeric" data-expense-field="amount" value="${Number(item.amount) || 0}">
+          <input type="number" min="0" step="1" inputmode="numeric" data-expense-field="amount" value="${Math.round(Number(item.amount)) || 0}" ${item.autoShopping ? "readonly" : ""}>
         </label>
         <label>
           <span>幣別</span>
-          <select data-expense-field="currency">
+          <select data-expense-field="currency" ${item.autoShopping ? "disabled" : ""}>
             ${Object.keys(data.meta.currencies).map((currency) => `
               <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
             `).join("")}
@@ -397,7 +556,7 @@ function renderExpenses() {
         </label>
         <label>
           <span>分類</span>
-          <select data-expense-field="category">
+          <select data-expense-field="category" ${item.autoShopping ? "disabled" : ""}>
             ${["交通", "住宿", "美食", "購物", "景點", "其他"].map((category) => `
               <option value="${category}" ${item.category === category ? "selected" : ""}>${category}</option>
             `).join("")}
@@ -406,14 +565,16 @@ function renderExpenses() {
       </div>
       <label class="expense-note">
         <span>備註</span>
-        <input type="text" data-expense-field="note" value="${escapeHtml(item.note || "")}">
+        <input type="text" data-expense-field="note" value="${escapeHtml(item.note || "")}" ${item.autoShopping ? "readonly" : ""}>
       </label>
       <footer>
         <label class="expense-paid">
           <input type="checkbox" data-expense-field="paid" ${item.paid ? "checked" : ""}>
           <span>已付款</span>
         </label>
-        <button class="delete-expense" type="button" aria-label="刪除 ${escapeHtml(item.item)}" title="刪除此筆">×</button>
+        ${item.autoShopping ? "" : `
+          <button class="delete-expense" type="button" aria-label="刪除 ${escapeHtml(item.item)}" title="刪除此筆">×</button>
+        `}
       </footer>
     </article>
   `).join("");
@@ -570,10 +731,11 @@ function renderBookings() {
 }
 
 function renderShopping() {
-  const saved = readState("shopping");
-  const completed = data.shopping.filter((item) => saved[item.id] ?? item.done).length;
-  const percent = data.shopping.length ? Math.round((completed / data.shopping.length) * 100) : 0;
-  const categories = ["全部", ...new Set(data.shopping.map((item) => item.category))];
+  const items = getShoppingItems();
+  const completed = items.filter((item) => item.done).length;
+  const percent = items.length ? Math.round((completed / items.length) * 100) : 0;
+  const categories = ["全部", ...new Set(items.map((item) => item.category))];
+  const totalJpy = shoppingTotalJpy(items);
   const statusOptions = [
     { value: "all", label: "全部" },
     { value: "pending", label: "待購" },
@@ -583,12 +745,15 @@ function renderShopping() {
   byId("shopping-summary").innerHTML = `
     <div>
       <span>採購進度</span>
-      <strong>${completed}/${data.shopping.length}</strong>
+      <strong>${completed}/${items.length}</strong>
     </div>
     <div class="shopping-progress" aria-label="已完成 ${percent}%">
       <i style="width:${percent}%"></i>
     </div>
-    <b>${percent}%</b>
+    <div class="shopping-total">
+      <small>品項合計</small>
+      <b>${currencyAmount(totalJpy)}</b>
+    </div>
   `;
 
   byId("shopping-filters").innerHTML = `
@@ -606,34 +771,52 @@ function renderShopping() {
     </select>
   `;
 
-  const visibleItems = data.shopping.filter((item) => {
-    const done = saved[item.id] ?? item.done;
+  const visibleItems = items.filter((item) => {
     const statusMatch = shoppingStatus === "all"
-      || (shoppingStatus === "done" && done)
-      || (shoppingStatus === "pending" && !done);
+      || (shoppingStatus === "done" && item.done)
+      || (shoppingStatus === "pending" && !item.done);
     return statusMatch && (shoppingCategory === "全部" || item.category === shoppingCategory);
   });
 
-  byId("shopping-list").innerHTML = visibleItems.length ? visibleItems.map((item) => {
-    const done = saved[item.id] ?? item.done;
-    return `
-      <label class="${done ? "completed" : ""}">
-        <input type="checkbox" data-shopping-item="${item.id}" ${done ? "checked" : ""}>
-        <img
-          class="shopping-thumb"
-          src="${item.image}"
-          alt=""
-          loading="lazy"
-          decoding="async"
-        >
-        <span class="shopping-copy">
-          <strong>${item.title}</strong>
-          <small>${item.category}</small>
-        </span>
-        <a href="${item.url}" target="_blank" rel="noreferrer" aria-label="在 Notion 開啟 ${item.title}">↗</a>
+  byId("shopping-list").innerHTML = visibleItems.length ? visibleItems.map((item) => `
+    <article data-shopping-id="${escapeHtml(item.id)}" class="${item.done ? "completed" : ""}">
+      ${item.image ? `
+        <img class="shopping-thumb" src="${item.image}" alt="" loading="lazy" decoding="async">
+      ` : `<div class="shopping-thumb shopping-placeholder">＋</div>`}
+      <label class="shopping-done">
+        <input type="checkbox" data-shopping-field="done" ${item.done ? "checked" : ""}>
+        <span>已購</span>
       </label>
-    `;
-  }).join("") : `<p class="empty-state">這個篩選條件目前沒有品項。</p>`;
+      <label class="shopping-title">
+        <span>品項</span>
+        <input type="text" data-shopping-field="title" value="${escapeHtml(item.title)}">
+      </label>
+      <label>
+        <span>分類</span>
+        <input type="text" data-shopping-field="category" value="${escapeHtml(item.category)}">
+      </label>
+      <label>
+        <span>價格</span>
+        <input type="number" min="0" step="1" inputmode="numeric" data-shopping-field="price" value="${Number(item.price) || 0}">
+      </label>
+      <label>
+        <span>幣別</span>
+        <select data-shopping-field="currency">
+          ${Object.keys(data.meta.currencies).map((currency) => `
+            <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
+          `).join("")}
+        </select>
+      </label>
+      <label class="shopping-url">
+        <span>參考連結</span>
+        <input type="url" data-shopping-field="url" value="${escapeHtml(item.url || "")}" placeholder="https://">
+      </label>
+      <footer>
+        ${item.url ? `<a href="${item.url}" target="_blank" rel="noreferrer" aria-label="開啟 ${escapeHtml(item.title)}">↗</a>` : ""}
+        <button class="delete-shopping" type="button" aria-label="刪除 ${escapeHtml(item.title)}" title="刪除此筆">×</button>
+      </footer>
+    </article>
+  `).join("") : `<p class="empty-state">這個篩選條件目前沒有品項。</p>`;
 
   byId("shopping-filters").querySelectorAll("[data-shopping-status]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -647,13 +830,55 @@ function renderShopping() {
     renderShopping();
   });
 
-  byId("shopping-list").querySelectorAll("input").forEach((input) => {
+  byId("shopping-list").querySelectorAll("[data-shopping-field]").forEach((input) => {
     input.addEventListener("change", () => {
-      saved[input.dataset.shoppingItem] = input.checked;
-      writeState("shopping", saved);
+      const card = input.closest("[data-shopping-id]");
+      const item = items.find((entry) => entry.id === card.dataset.shoppingId);
+      if (!item) return;
+      const field = input.dataset.shoppingField;
+      item[field] = field === "done"
+        ? input.checked
+        : field === "price"
+          ? Math.max(0, Number(input.value) || 0)
+          : input.value;
+      saveShoppingItems(items);
       renderShopping();
+      renderExpenses();
     });
   });
+
+  byId("shopping-list").querySelectorAll(".delete-shopping").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.closest("[data-shopping-id]").dataset.shoppingId;
+      saveShoppingItems(items.filter((item) => item.id !== id));
+      renderShopping();
+      renderExpenses();
+    });
+  });
+
+  byId("add-shopping").onclick = () => {
+    items.push({
+      id: `custom-${Date.now()}`,
+      title: "新增採購品項",
+      category: "其他",
+      image: "",
+      url: "",
+      price: 0,
+      currency: "JPY",
+      done: false
+    });
+    shoppingStatus = "all";
+    shoppingCategory = "全部";
+    saveShoppingItems(items);
+    renderShopping();
+  };
+
+  byId("reset-shopping").onclick = () => {
+    localStorage.removeItem(storageKey("shoppingItems"));
+    localStorage.removeItem(storageKey("shopping"));
+    renderShopping();
+    renderExpenses();
+  };
 }
 
 function setTab(tabName) {
@@ -662,6 +887,77 @@ function setTab(tabName) {
   });
   document.querySelectorAll(".bottom-nav button").forEach((button) => {
     button.classList.toggle("active", button.dataset.tab === tabName);
+  });
+}
+
+const userDataKeys = ["itinerary", "expenses", "shoppingItems", "shopping", "tasks"];
+
+function currentUserData() {
+  return {
+    itinerary: readState("itinerary"),
+    expenses: getExpenses().map(({ autoShopping, ...item }) => item),
+    shoppingItems: getShoppingItems(),
+    shopping: readState("shopping"),
+    tasks: getTasks()
+  };
+}
+
+function setBackupStatus(message, isError = false) {
+  const status = byId("data-backup-status");
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
+function exportUserData() {
+  const payload = {
+    version: 1,
+    trip: data.meta.title,
+    exportedAt: new Date().toISOString(),
+    state: currentUserData()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json;charset=utf-8"
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const date = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = `fukuoka-trip-data-${date}.json`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setBackupStatus("資料已匯出，修改網站前可用此檔同步最新內容。");
+}
+
+async function importUserData(file) {
+  try {
+    const payload = JSON.parse(await file.text());
+    const state = payload.state && typeof payload.state === "object"
+      ? payload.state
+      : payload;
+    if (!state || typeof state !== "object") throw new Error("資料格式不正確");
+
+    let imported = 0;
+    userDataKeys.forEach((key) => {
+      if (Object.hasOwn(state, key)) {
+        writeState(key, state[key]);
+        imported += 1;
+      }
+    });
+    if (!imported) throw new Error("找不到可匯入的旅程資料");
+
+    renderApp();
+    setBackupStatus(`已匯入 ${imported} 類資料。`);
+  } catch (error) {
+    setBackupStatus(`匯入失敗：${error.message}`, true);
+  }
+}
+
+function bindDataBackup() {
+  byId("export-data").addEventListener("click", exportUserData);
+  byId("import-data").addEventListener("change", async (event) => {
+    const [file] = event.target.files;
+    if (file) await importUserData(file);
+    event.target.value = "";
   });
 }
 
@@ -685,4 +981,5 @@ function renderApp() {
 }
 
 bindTabs();
+bindDataBackup();
 renderApp();

@@ -48,6 +48,7 @@
             <a id="stay-map" href="#" target="_blank" rel="noreferrer">▣ 地圖</a>
           </article>
           <div class="itinerary-actions">
+            <button id="add-itinerary" type="button">＋ 新增行程</button>
             <button id="reset-day" type="button" title="重設本日行程順序與時間" aria-label="重設本日行程順序與時間">↺</button>
           </div>
           <div class="timeline" id="timeline"></div>
@@ -81,6 +82,10 @@
           </header>
           <div class="shopping-summary" id="shopping-summary"></div>
           <div class="shopping-filters" id="shopping-filters" aria-label="採購清單篩選"></div>
+          <div class="shopping-actions">
+            <button id="add-shopping" type="button">＋ 新增品項</button>
+            <button id="reset-shopping" type="button" title="重設採購清單" aria-label="重設採購清單">↺</button>
+          </div>
           <div class="shopping-list" id="shopping-list"></div>
         </section>
 
@@ -96,6 +101,18 @@
             <button id="reset-tasks" type="button" title="重設提醒資料" aria-label="重設提醒資料">↺</button>
           </div>
           <div class="task-list" id="task-list"></div>
+          <section class="data-backup">
+            <header>
+              <strong>資料備份</strong>
+              <small>行程、花費、採購與提醒</small>
+            </header>
+            <div>
+              <button id="export-data" type="button">匯出資料</button>
+              <label for="import-data">匯入資料</label>
+              <input id="import-data" type="file" accept="application/json,.json">
+            </div>
+            <small id="data-backup-status" role="status" aria-live="polite"></small>
+          </section>
         </section>
       </main>
 
