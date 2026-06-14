@@ -83,6 +83,27 @@ function saveExpenses(expenses) {
   writeState("expenses", expenses);
 }
 
+function taskDefaults() {
+  return data.tasks.map((task, index) => ({
+    id: `default-${index}`,
+    ...task
+  }));
+}
+
+function getTasks() {
+  const saved = readState("tasks");
+  if (Array.isArray(saved)) return saved;
+
+  return taskDefaults().map((task, index) => ({
+    ...task,
+    done: saved[index] ?? task.done
+  }));
+}
+
+function saveTasks(tasks) {
+  writeState("tasks", tasks);
+}
+
 function convertCurrency(amount, sourceCurrency = "JPY") {
   if (sourceCurrency === selectedCurrency) return amount || 0;
   const rates = data.meta.rates;
@@ -462,34 +483,77 @@ function renderWeather() {
 }
 
 function renderTasks() {
-  const saved = readState("tasks");
-  const completed = data.tasks.filter((task, index) => saved[index] ?? task.done).length;
+  const tasks = getTasks();
+  const completed = tasks.filter((task) => task.done).length;
 
   byId("task-summary").innerHTML = `
-    <strong>${completed}/${data.tasks.length}</strong>
+    <strong>${completed}/${tasks.length}</strong>
     <span>已完成提醒</span>
   `;
 
-  byId("task-list").innerHTML = data.tasks.map((task, index) => `
-    <label>
-      <input type="checkbox" data-task="${index}" ${saved[index] ?? task.done ? "checked" : ""}>
-      <span class="task-copy">
-        <strong>${escapeHtml(task.title)}</strong>
-        <small>${escapeHtml(task.group)}</small>
-      </span>
+  byId("task-list").innerHTML = tasks.map((task) => `
+    <article data-task-id="${escapeHtml(task.id)}" class="${task.done ? "completed" : ""}">
+      <label class="task-done">
+        <input type="checkbox" data-task-field="done" ${task.done ? "checked" : ""}>
+        <span>完成</span>
+      </label>
+      <label class="task-title">
+        <span>提醒內容</span>
+        <input type="text" data-task-field="title" value="${escapeHtml(task.title)}">
+      </label>
+      <label class="task-group">
+        <span>分類</span>
+        <input type="text" data-task-field="group" value="${escapeHtml(task.group)}">
+      </label>
+      <label class="task-url">
+        <span>連結</span>
+        <input type="url" data-task-field="url" value="${escapeHtml(task.url || "")}" placeholder="https://">
+      </label>
+      <footer>
       ${task.url ? `
         <a href="${task.url}" target="_blank" rel="noreferrer" aria-label="開啟 ${escapeHtml(task.title)}">↗</a>
       ` : ""}
-    </label>
+        <button class="delete-task" type="button" aria-label="刪除 ${escapeHtml(task.title)}" title="刪除此筆">×</button>
+      </footer>
+    </article>
   `).join("");
 
-  byId("task-list").querySelectorAll("input").forEach((input) => {
+  byId("task-list").querySelectorAll("[data-task-field]").forEach((input) => {
     input.addEventListener("change", () => {
-      saved[input.dataset.task] = input.checked;
-      writeState("tasks", saved);
+      const card = input.closest("[data-task-id]");
+      const task = tasks.find((item) => item.id === card.dataset.taskId);
+      if (!task) return;
+      const field = input.dataset.taskField;
+      task[field] = field === "done" ? input.checked : input.value;
+      saveTasks(tasks);
       renderTasks();
     });
   });
+
+  byId("task-list").querySelectorAll(".delete-task").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.closest("[data-task-id]").dataset.taskId;
+      saveTasks(tasks.filter((task) => task.id !== id));
+      renderTasks();
+    });
+  });
+
+  byId("add-task").onclick = () => {
+    tasks.push({
+      id: `custom-${Date.now()}`,
+      title: "新增提醒",
+      group: "其他",
+      url: "",
+      done: false
+    });
+    saveTasks(tasks);
+    renderTasks();
+  };
+
+  byId("reset-tasks").onclick = () => {
+    localStorage.removeItem(storageKey("tasks"));
+    renderTasks();
+  };
 }
 
 function renderBookings() {
