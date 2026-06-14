@@ -225,6 +225,7 @@ window.tripData = {
     { title: "打包摺疊傘、防水鞋、薄外套、防蚊與防曬", group: "梅雨", done: false },
     { title: "行動電源放隨身，另帶耳塞、眼罩與常備藥", group: "行李", done: false },
     { title: "6/18 抵達博多後領 JR PASS 並確認指定席", group: "交通", done: false },
-    { title: "6/19 前確認皿倉山纜車營業與能見度", group: "天氣", done: false }
+    { title: "6/19 前確認皿倉山纜車營業與能見度", group: "天氣", done: false },
+    { title: "HATTEN 福岡資訊", group: "夜間資訊", url: "https://hatten.jp/fukuoka", done: false }
   ]
 };

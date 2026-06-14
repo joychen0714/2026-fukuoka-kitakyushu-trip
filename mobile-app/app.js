@@ -473,10 +473,13 @@ function renderTasks() {
   byId("task-list").innerHTML = data.tasks.map((task, index) => `
     <label>
       <input type="checkbox" data-task="${index}" ${saved[index] ?? task.done ? "checked" : ""}>
-      <span>
-        <strong>${task.title}</strong>
-        <small>${task.group}</small>
+      <span class="task-copy">
+        <strong>${escapeHtml(task.title)}</strong>
+        <small>${escapeHtml(task.group)}</small>
       </span>
+      ${task.url ? `
+        <a href="${task.url}" target="_blank" rel="noreferrer" aria-label="開啟 ${escapeHtml(task.title)}">↗</a>
+      ` : ""}
     </label>
   `).join("");
 
