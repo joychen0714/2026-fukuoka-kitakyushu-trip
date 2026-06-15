@@ -1,12 +1,21 @@
 const data = window.tripData;
 const byId = (id) => document.getElementById(id);
 const storageKey = (key) => `trip-mobile-${key}`;
+const supabaseClient = window.supabase.createClient(
+  window.tripSupabaseConfig.url,
+  window.tripSupabaseConfig.publishableKey
+);
 
 let selectedDay = 0;
 let selectedCurrency = "JPY";
 let shoppingStatus = "pending";
 let shoppingCategory = "全部";
 let timelineSortable = null;
+let currentSession = null;
+let isEditor = false;
+let cloudStateExists = false;
+let cloudSyncTimer = null;
+let suppressCloudSync = true;
 
 function readState(key) {
   try {
@@ -18,6 +27,12 @@ function readState(key) {
 
 function writeState(key, value) {
   localStorage.setItem(storageKey(key), JSON.stringify(value));
+  scheduleCloudSave();
+}
+
+function removeState(key) {
+  localStorage.removeItem(storageKey(key));
+  scheduleCloudSave();
 }
 
 function escapeHtml(value) {
@@ -330,6 +345,7 @@ function renderTimeline() {
           value="${escapeHtml(item.time)}"
           data-time-key="${escapeHtml(item._key)}"
           aria-label="${escapeHtml(item.title)}時間"
+          ${isEditor ? "" : "disabled"}
         >
       </label>
       <div class="time-line"></div>
@@ -347,8 +363,8 @@ function renderTimeline() {
           <div class="event-heading">
             <h2><span>${item.icon}</span>${escapeHtml(item.title)}</h2>
             <div class="event-tools">
-              <button class="edit-event" type="button" title="編輯行程" aria-label="編輯 ${escapeHtml(item.title)}">✎</button>
-              <button class="drag-handle" type="button" title="長按拖曳調整順序" aria-label="拖曳 ${escapeHtml(item.title)}">⠿</button>
+              <button class="edit-event editor-only" type="button" title="編輯行程" aria-label="編輯 ${escapeHtml(item.title)}">✎</button>
+              <button class="drag-handle editor-only" type="button" title="長按拖曳調整順序" aria-label="拖曳 ${escapeHtml(item.title)}">⠿</button>
             </div>
           </div>
           <div class="event-tags">
@@ -453,7 +469,7 @@ function renderTimeline() {
     });
   });
 
-  if (window.Sortable) {
+  if (window.Sortable && isEditor) {
     timelineSortable = window.Sortable.create(byId("timeline"), {
       animation: 180,
       handle: ".drag-handle",
@@ -539,16 +555,16 @@ function renderExpenses() {
     <article data-expense-id="${escapeHtml(item.id)}">
       <label class="expense-name">
         <span>項目</span>
-        <input type="text" data-expense-field="item" value="${escapeHtml(item.item)}" ${item.autoShopping ? "readonly" : ""}>
+        <input type="text" data-expense-field="item" value="${escapeHtml(item.item)}" ${item.autoShopping || !isEditor ? "readonly" : ""}>
       </label>
       <div class="expense-grid">
         <label>
           <span>金額</span>
-          <input type="number" min="0" step="1" inputmode="numeric" data-expense-field="amount" value="${Math.round(Number(item.amount)) || 0}" ${item.autoShopping ? "readonly" : ""}>
+          <input type="number" min="0" step="1" inputmode="numeric" data-expense-field="amount" value="${Math.round(Number(item.amount)) || 0}" ${item.autoShopping || !isEditor ? "readonly" : ""}>
         </label>
         <label>
           <span>幣別</span>
-          <select data-expense-field="currency" ${item.autoShopping ? "disabled" : ""}>
+          <select data-expense-field="currency" ${item.autoShopping || !isEditor ? "disabled" : ""}>
             ${Object.keys(data.meta.currencies).map((currency) => `
               <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
             `).join("")}
@@ -556,7 +572,7 @@ function renderExpenses() {
         </label>
         <label>
           <span>分類</span>
-          <select data-expense-field="category" ${item.autoShopping ? "disabled" : ""}>
+          <select data-expense-field="category" ${item.autoShopping || !isEditor ? "disabled" : ""}>
             ${["交通", "住宿", "美食", "購物", "景點", "其他"].map((category) => `
               <option value="${category}" ${item.category === category ? "selected" : ""}>${category}</option>
             `).join("")}
@@ -565,15 +581,15 @@ function renderExpenses() {
       </div>
       <label class="expense-note">
         <span>備註</span>
-        <input type="text" data-expense-field="note" value="${escapeHtml(item.note || "")}" ${item.autoShopping ? "readonly" : ""}>
+        <input type="text" data-expense-field="note" value="${escapeHtml(item.note || "")}" ${item.autoShopping || !isEditor ? "readonly" : ""}>
       </label>
       <footer>
         <label class="expense-paid">
-          <input type="checkbox" data-expense-field="paid" ${item.paid ? "checked" : ""}>
+          <input type="checkbox" data-expense-field="paid" ${item.paid ? "checked" : ""} ${isEditor ? "" : "disabled"}>
           <span>已付款</span>
         </label>
         ${item.autoShopping ? "" : `
-          <button class="delete-expense" type="button" aria-label="刪除 ${escapeHtml(item.item)}" title="刪除此筆">×</button>
+          <button class="delete-expense editor-only" type="button" aria-label="刪除 ${escapeHtml(item.item)}" title="刪除此筆">×</button>
         `}
       </footer>
     </article>
@@ -618,7 +634,7 @@ function renderExpenses() {
   };
 
   byId("reset-expenses").onclick = () => {
-    localStorage.removeItem(storageKey("expenses"));
+    removeState("expenses");
     renderExpenses();
   };
 }
@@ -655,26 +671,26 @@ function renderTasks() {
   byId("task-list").innerHTML = tasks.map((task) => `
     <article data-task-id="${escapeHtml(task.id)}" class="${task.done ? "completed" : ""}">
       <label class="task-done">
-        <input type="checkbox" data-task-field="done" ${task.done ? "checked" : ""}>
+        <input type="checkbox" data-task-field="done" ${task.done ? "checked" : ""} ${isEditor ? "" : "disabled"}>
         <span>完成</span>
       </label>
       <label class="task-title">
         <span>提醒內容</span>
-        <input type="text" data-task-field="title" value="${escapeHtml(task.title)}">
+        <input type="text" data-task-field="title" value="${escapeHtml(task.title)}" ${isEditor ? "" : "readonly"}>
       </label>
       <label class="task-group">
         <span>分類</span>
-        <input type="text" data-task-field="group" value="${escapeHtml(task.group)}">
+        <input type="text" data-task-field="group" value="${escapeHtml(task.group)}" ${isEditor ? "" : "readonly"}>
       </label>
       <label class="task-url">
         <span>連結</span>
-        <input type="url" data-task-field="url" value="${escapeHtml(task.url || "")}" placeholder="https://">
+        <input type="url" data-task-field="url" value="${escapeHtml(task.url || "")}" placeholder="https://" ${isEditor ? "" : "readonly"}>
       </label>
       <footer>
       ${task.url ? `
         <a href="${task.url}" target="_blank" rel="noreferrer" aria-label="開啟 ${escapeHtml(task.title)}">↗</a>
       ` : ""}
-        <button class="delete-task" type="button" aria-label="刪除 ${escapeHtml(task.title)}" title="刪除此筆">×</button>
+        <button class="delete-task editor-only" type="button" aria-label="刪除 ${escapeHtml(task.title)}" title="刪除此筆">×</button>
       </footer>
     </article>
   `).join("");
@@ -712,7 +728,7 @@ function renderTasks() {
   };
 
   byId("reset-tasks").onclick = () => {
-    localStorage.removeItem(storageKey("tasks"));
+    removeState("tasks");
     renderTasks();
   };
 }
@@ -784,24 +800,24 @@ function renderShopping() {
         <img class="shopping-thumb" src="${item.image}" alt="" loading="lazy" decoding="async">
       ` : `<div class="shopping-thumb shopping-placeholder">＋</div>`}
       <label class="shopping-done">
-        <input type="checkbox" data-shopping-field="done" ${item.done ? "checked" : ""}>
+        <input type="checkbox" data-shopping-field="done" ${item.done ? "checked" : ""} ${isEditor ? "" : "disabled"}>
         <span>已購</span>
       </label>
       <label class="shopping-title">
         <span>品項</span>
-        <input type="text" data-shopping-field="title" value="${escapeHtml(item.title)}">
+        <input type="text" data-shopping-field="title" value="${escapeHtml(item.title)}" ${isEditor ? "" : "readonly"}>
       </label>
       <label>
         <span>分類</span>
-        <input type="text" data-shopping-field="category" value="${escapeHtml(item.category)}">
+        <input type="text" data-shopping-field="category" value="${escapeHtml(item.category)}" ${isEditor ? "" : "readonly"}>
       </label>
       <label>
         <span>價格</span>
-        <input type="number" min="0" step="1" inputmode="numeric" data-shopping-field="price" value="${Number(item.price) || 0}">
+        <input type="number" min="0" step="1" inputmode="numeric" data-shopping-field="price" value="${Number(item.price) || 0}" ${isEditor ? "" : "readonly"}>
       </label>
       <label>
         <span>幣別</span>
-        <select data-shopping-field="currency">
+        <select data-shopping-field="currency" ${isEditor ? "" : "disabled"}>
           ${Object.keys(data.meta.currencies).map((currency) => `
             <option value="${currency}" ${item.currency === currency ? "selected" : ""}>${currency}</option>
           `).join("")}
@@ -809,11 +825,11 @@ function renderShopping() {
       </label>
       <label class="shopping-url">
         <span>參考連結</span>
-        <input type="url" data-shopping-field="url" value="${escapeHtml(item.url || "")}" placeholder="https://">
+        <input type="url" data-shopping-field="url" value="${escapeHtml(item.url || "")}" placeholder="https://" ${isEditor ? "" : "readonly"}>
       </label>
       <footer>
         ${item.url ? `<a href="${item.url}" target="_blank" rel="noreferrer" aria-label="開啟 ${escapeHtml(item.title)}">↗</a>` : ""}
-        <button class="delete-shopping" type="button" aria-label="刪除 ${escapeHtml(item.title)}" title="刪除此筆">×</button>
+        <button class="delete-shopping editor-only" type="button" aria-label="刪除 ${escapeHtml(item.title)}" title="刪除此筆">×</button>
       </footer>
     </article>
   `).join("") : `<p class="empty-state">這個篩選條件目前沒有品項。</p>`;
@@ -874,8 +890,8 @@ function renderShopping() {
   };
 
   byId("reset-shopping").onclick = () => {
-    localStorage.removeItem(storageKey("shoppingItems"));
-    localStorage.removeItem(storageKey("shopping"));
+    removeState("shoppingItems");
+    removeState("shopping");
     renderShopping();
     renderExpenses();
   };
@@ -891,6 +907,7 @@ function setTab(tabName) {
 }
 
 const userDataKeys = ["itinerary", "expenses", "shoppingItems", "shopping", "tasks"];
+const pendingSyncKey = storageKey("pending-cloud-sync");
 
 function currentUserData() {
   return {
@@ -900,6 +917,207 @@ function currentUserData() {
     shopping: readState("shopping"),
     tasks: getTasks()
   };
+}
+
+function applyUserData(state) {
+  suppressCloudSync = true;
+  userDataKeys.forEach((key) => {
+    if (Object.hasOwn(state, key)) {
+      localStorage.setItem(storageKey(key), JSON.stringify(state[key]));
+    }
+  });
+  suppressCloudSync = false;
+}
+
+async function loadCloudState() {
+  const { data: cloudState, error } = await supabaseClient
+    .from("trip_app_state")
+    .select("data, updated_at")
+    .eq("id", "main")
+    .maybeSingle();
+
+  if (error) {
+    setAccessStatus("雲端資料讀取失敗", true);
+    return false;
+  }
+  if (!cloudState?.data || !Object.keys(cloudState.data).length) {
+    cloudStateExists = false;
+    return false;
+  }
+
+  cloudStateExists = true;
+  applyUserData(cloudState.data);
+  renderApp();
+  return true;
+}
+
+async function saveCloudState() {
+  if (!isEditor || suppressCloudSync) return false;
+
+  const { error } = await supabaseClient
+    .from("trip_app_state")
+    .upsert({
+      id: "main",
+      data: currentUserData()
+    }, {
+      onConflict: "id"
+    });
+  if (error) {
+    localStorage.setItem(pendingSyncKey, "1");
+    setAccessStatus("管理者模式・等待同步", true);
+    return false;
+  }
+
+  cloudStateExists = true;
+  localStorage.removeItem(pendingSyncKey);
+  setAccessStatus("管理者編輯模式・已同步");
+  return true;
+}
+
+function scheduleCloudSave() {
+  if (!isEditor || suppressCloudSync) return;
+  localStorage.setItem(pendingSyncKey, "1");
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(saveCloudState, 650);
+}
+
+function setAccessStatus(message, isError = false) {
+  const status = byId("access-status");
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
+function setAuthMessage(message, isError = false) {
+  const status = byId("auth-message");
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
+function updateAccessUi() {
+  document.body.classList.toggle("editor-mode", isEditor);
+  byId("auth-button").textContent = currentSession ? "管理者設定" : "管理者登入";
+  byId("auth-credentials").hidden = Boolean(currentSession);
+  byId("auth-session").hidden = !currentSession;
+  byId("auth-claim").hidden = !currentSession || isEditor;
+  byId("auth-user-email").textContent = currentSession
+    ? `${currentSession.user.email}${isEditor ? "・管理者" : "・尚未取得編輯權限"}`
+    : "";
+  if (isEditor) {
+    setAccessStatus(
+      localStorage.getItem(pendingSyncKey)
+        ? "管理者模式・等待同步"
+        : "管理者編輯模式・已同步"
+    );
+  } else {
+    setAccessStatus("公開瀏覽模式");
+  }
+}
+
+async function refreshAccessState() {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  currentSession = sessionData.session;
+  isEditor = false;
+
+  if (currentSession) {
+    const { data: editorMembership, error } = await supabaseClient
+      .from("trip_editors")
+      .select("user_id")
+      .eq("user_id", currentSession.user.id)
+      .maybeSingle();
+    if (!error) isEditor = Boolean(editorMembership);
+  }
+  updateAccessUi();
+}
+
+function authCredentials() {
+  const email = byId("auth-email").value.trim();
+  const password = byId("auth-password").value;
+  if (!email || password.length < 6) {
+    setAuthMessage("請輸入有效 Email，密碼至少需要 6 個字元。", true);
+    return null;
+  }
+  return { email, password };
+}
+
+function bindAuthentication() {
+  const dialog = byId("auth-dialog");
+  byId("auth-button").addEventListener("click", () => {
+    setAuthMessage("");
+    dialog.showModal();
+  });
+
+  byId("auth-signin").addEventListener("click", async () => {
+    const credentials = authCredentials();
+    if (!credentials) return;
+    setAuthMessage("登入中…");
+    const { error } = await supabaseClient.auth.signInWithPassword(credentials);
+    if (error) {
+      setAuthMessage(`登入失敗：${error.message}`, true);
+      return;
+    }
+    await refreshAccessState();
+    if (isEditor && localStorage.getItem(pendingSyncKey)) {
+      await saveCloudState();
+    } else {
+      await loadCloudState();
+    }
+    renderApp();
+    setAuthMessage(isEditor ? "已進入管理者編輯模式。" : "登入成功，請輸入首次管理者設定碼。");
+  });
+
+  byId("auth-signup").addEventListener("click", async () => {
+    const credentials = authCredentials();
+    if (!credentials) return;
+    setAuthMessage("建立帳號中…");
+    const { data: signupData, error } = await supabaseClient.auth.signUp({
+      ...credentials,
+      options: {
+        emailRedirectTo: "https://joychen0714.github.io/2026-fukuoka-kitakyushu-trip/mobile-app/"
+      }
+    });
+    if (error) {
+      setAuthMessage(`建立失敗：${error.message}`, true);
+      return;
+    }
+    if (signupData.session) {
+      await refreshAccessState();
+      setAuthMessage("帳號已建立，請輸入首次管理者設定碼。");
+    } else {
+      setAuthMessage("驗證信已寄出。完成 Email 驗證後，請回到此頁登入。");
+    }
+  });
+
+  byId("auth-claim-button").addEventListener("click", async () => {
+    const code = byId("auth-claim-code").value.trim();
+    if (!code) {
+      setAuthMessage("請輸入首次管理者設定碼。", true);
+      return;
+    }
+    setAuthMessage("正在設定管理者權限…");
+    const { data: claimed, error } = await supabaseClient.rpc("claim_trip_editor", {
+      setup_code: code
+    });
+    if (error || !claimed) {
+      setAuthMessage("設定碼不正確或已使用。", true);
+      return;
+    }
+    isEditor = true;
+    updateAccessUi();
+    renderApp();
+    await saveCloudState();
+    byId("auth-claim-code").value = "";
+    setAuthMessage("管理者權限已啟用，這台裝置的現有資料已同步至雲端。");
+  });
+
+  byId("auth-signout").addEventListener("click", async () => {
+    await supabaseClient.auth.signOut();
+    currentSession = null;
+    isEditor = false;
+    updateAccessUi();
+    await loadCloudState();
+    renderApp();
+    setAuthMessage("已登出。");
+  });
 }
 
 function setBackupStatus(message, isError = false) {
@@ -946,6 +1164,7 @@ async function importUserData(file) {
     if (!imported) throw new Error("找不到可匯入的旅程資料");
 
     renderApp();
+    scheduleCloudSave();
     setBackupStatus(`已匯入 ${imported} 類資料。`);
   } catch (error) {
     setBackupStatus(`匯入失敗：${error.message}`, true);
@@ -980,6 +1199,30 @@ function renderApp() {
   renderTasks();
 }
 
-bindTabs();
-bindDataBackup();
-renderApp();
+async function initializeApp() {
+  bindTabs();
+  bindDataBackup();
+  bindAuthentication();
+  await refreshAccessState();
+
+  if (isEditor && localStorage.getItem(pendingSyncKey)) {
+    await saveCloudState();
+  } else {
+    await loadCloudState();
+  }
+
+  suppressCloudSync = false;
+  updateAccessUi();
+  renderApp();
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    setTimeout(async () => {
+      await refreshAccessState();
+      updateAccessUi();
+      renderApp();
+    }, 0);
+  });
+}
+
+initializeApp();

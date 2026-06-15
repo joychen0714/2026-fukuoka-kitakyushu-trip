@@ -36,6 +36,10 @@
 
         <nav class="day-strip" id="day-strip" aria-label="每日行程"></nav>
         <div class="legend" id="region-legend"></div>
+        <div class="access-bar">
+          <span id="access-status">公開瀏覽模式</span>
+          <button id="auth-button" type="button">管理者登入</button>
+        </div>
       </header>
 
       <main>
@@ -47,7 +51,7 @@
             </div>
             <a id="stay-map" href="#" target="_blank" rel="noreferrer">▣ 地圖</a>
           </article>
-          <div class="itinerary-actions">
+          <div class="itinerary-actions editor-only">
             <button id="add-itinerary" type="button">＋ 新增行程</button>
             <button id="reset-day" type="button" title="重設本日行程順序與時間" aria-label="重設本日行程順序與時間">↺</button>
           </div>
@@ -60,7 +64,7 @@
             <h2>花費總覽</h2>
           </header>
           <div class="expense-summary" id="expense-summary"></div>
-          <div class="expense-actions">
+          <div class="expense-actions editor-only">
             <button id="add-expense" type="button">＋ 新增花費</button>
             <button id="reset-expenses" type="button" title="重設花費資料" aria-label="重設花費資料">↺</button>
           </div>
@@ -82,7 +86,7 @@
           </header>
           <div class="shopping-summary" id="shopping-summary"></div>
           <div class="shopping-filters" id="shopping-filters" aria-label="採購清單篩選"></div>
-          <div class="shopping-actions">
+          <div class="shopping-actions editor-only">
             <button id="add-shopping" type="button">＋ 新增品項</button>
             <button id="reset-shopping" type="button" title="重設採購清單" aria-label="重設採購清單">↺</button>
           </div>
@@ -96,12 +100,12 @@
           </header>
           <div class="booking-list" id="booking-list"></div>
           <div class="task-summary" id="task-summary"></div>
-          <div class="task-actions">
+          <div class="task-actions editor-only">
             <button id="add-task" type="button">＋ 新增提醒</button>
             <button id="reset-tasks" type="button" title="重設提醒資料" aria-label="重設提醒資料">↺</button>
           </div>
           <div class="task-list" id="task-list"></div>
-          <section class="data-backup">
+          <section class="data-backup editor-only">
             <header>
               <strong>資料備份</strong>
               <small>行程、花費、採購與提醒</small>
@@ -140,8 +144,48 @@
       </nav>
     </div>
 
+    <dialog class="auth-dialog" id="auth-dialog">
+      <form method="dialog" class="auth-dialog-card">
+        <header>
+          <div>
+            <small>Administrator</small>
+            <h2>管理者登入</h2>
+          </div>
+          <button class="auth-close" type="submit" aria-label="關閉">×</button>
+        </header>
+        <div id="auth-credentials">
+          <label>
+            <span>Email</span>
+            <input id="auth-email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            <span>密碼</span>
+            <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required>
+          </label>
+          <div class="auth-actions">
+            <button id="auth-signin" type="button">登入</button>
+            <button id="auth-signup" type="button">建立帳號</button>
+          </div>
+        </div>
+        <div id="auth-claim" hidden>
+          <label>
+            <span>首次管理者設定碼</span>
+            <input id="auth-claim-code" type="password" autocomplete="off">
+          </label>
+          <button id="auth-claim-button" type="button">認領管理權限</button>
+        </div>
+        <div id="auth-session" hidden>
+          <strong id="auth-user-email"></strong>
+          <button id="auth-signout" type="button">登出</button>
+        </div>
+        <p id="auth-message" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+
     <script src="trip-data.js"></script>
     <script src="assets/vendor/Sortable.min.js"></script>
+    <script src="assets/vendor/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
