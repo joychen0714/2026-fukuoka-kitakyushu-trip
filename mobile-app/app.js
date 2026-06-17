@@ -1,6 +1,8 @@
 const data = window.tripData;
 const byId = (id) => document.getElementById(id);
 const storageKey = (key) => `trip-mobile-${key}`;
+const localRecoveryMode = location.protocol === "file:"
+  && new URLSearchParams(location.search).has("local-recovery");
 const supabaseClient = window.supabase.createClient(
   window.tripSupabaseConfig.url,
   window.tripSupabaseConfig.publishableKey
@@ -42,6 +44,15 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function fitTextarea(textarea) {
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight + 6}px`;
+}
+
+function fitTextareas(scope = document) {
+  scope.querySelectorAll("textarea.autosize").forEach(fitTextarea);
 }
 
 function itemKey(item) {
@@ -676,7 +687,7 @@ function renderTasks() {
       </label>
       <label class="task-title">
         <span>提醒內容</span>
-        <input type="text" data-task-field="title" value="${escapeHtml(task.title)}" ${isEditor ? "" : "readonly"}>
+        <textarea class="autosize" data-task-field="title" rows="2" ${isEditor ? "" : "readonly"}>${escapeHtml(task.title)}</textarea>
       </label>
       <label class="task-group">
         <span>分類</span>
@@ -696,6 +707,10 @@ function renderTasks() {
   `).join("");
 
   byId("task-list").querySelectorAll("[data-task-field]").forEach((input) => {
+    if (input.matches("textarea.autosize")) {
+      fitTextarea(input);
+      input.addEventListener("input", () => fitTextarea(input));
+    }
     input.addEventListener("change", () => {
       const card = input.closest("[data-task-id]");
       const task = tasks.find((item) => item.id === card.dataset.taskId);
@@ -731,6 +746,8 @@ function renderTasks() {
     removeState("tasks");
     renderTasks();
   };
+
+  fitTextareas(byId("task-list"));
 }
 
 function renderBookings() {
@@ -904,6 +921,9 @@ function setTab(tabName) {
   document.querySelectorAll(".bottom-nav button").forEach((button) => {
     button.classList.toggle("active", button.dataset.tab === tabName);
   });
+  if (tabName === "reminders") {
+    requestAnimationFrame(() => fitTextareas(byId("panel-reminders")));
+  }
 }
 
 const userDataKeys = ["itinerary", "expenses", "shoppingItems", "shopping", "tasks"];
@@ -995,6 +1015,12 @@ function setAuthMessage(message, isError = false) {
 
 function updateAccessUi() {
   document.body.classList.toggle("editor-mode", isEditor);
+  if (localRecoveryMode) {
+    byId("auth-button").hidden = true;
+    byId("access-status").textContent = "本機資料復原模式・不連接雲端";
+    return;
+  }
+  byId("auth-button").hidden = false;
   byId("auth-button").textContent = currentSession ? "管理者設定" : "管理者登入";
   byId("auth-credentials").hidden = Boolean(currentSession);
   byId("auth-session").hidden = !currentSession;
@@ -1202,6 +1228,17 @@ function renderApp() {
 async function initializeApp() {
   bindTabs();
   bindDataBackup();
+
+  if (localRecoveryMode) {
+    isEditor = true;
+    currentSession = null;
+    suppressCloudSync = true;
+    updateAccessUi();
+    renderApp();
+    setBackupStatus("請先匯出這個瀏覽器保存的舊資料，再回正式網站匯入。");
+    return;
+  }
+
   bindAuthentication();
   await refreshAccessState();
 

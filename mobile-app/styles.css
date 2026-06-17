@@ -256,6 +256,7 @@ h1 {
 }
 
 body:not(.editor-mode) input[readonly],
+body:not(.editor-mode) textarea[readonly],
 body:not(.editor-mode) input:disabled,
 body:not(.editor-mode) select:disabled,
 body:not(.editor-mode) textarea:disabled {
@@ -1251,17 +1252,25 @@ main {
 }
 
 .task-list input[type="text"],
-.task-list input[type="url"] {
+.task-list input[type="url"],
+.task-list textarea {
   width: 100%;
   min-height: 2.55rem;
-  padding: 0 0.65rem;
+  padding: 0.6rem 0.65rem;
   color: var(--ink);
   background: #fbfaf7;
   border: 1px solid var(--line);
   border-radius: 0.45rem;
 }
 
-.task-list input:focus {
+.task-list textarea {
+  overflow: hidden;
+  line-height: 1.55;
+  resize: none;
+}
+
+.task-list input:focus,
+.task-list textarea:focus {
   border-color: var(--green);
   outline: 0;
 }
@@ -1270,8 +1279,14 @@ main {
   grid-column: 2 / -1;
 }
 
-.task-title input {
+.task-title textarea {
+  min-height: 4.1rem;
   font-weight: 800;
+}
+
+.task-list article.completed .task-title textarea {
+  color: var(--muted);
+  text-decoration: line-through;
 }
 
 .task-done {
